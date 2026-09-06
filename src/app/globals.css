@@ -1,0 +1,312 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --teal: #2A7D6F;
+    --teal-light: #4AADA0;
+    --teal-pale: #E8F5F3;
+    --peach: #F4A47A;
+    --peach-pale: #FEF3EC;
+    --mustard: #E8843A;
+    --blue-accent: #4A90B8;
+    --off-white: #FAFAF8;
+    --card-white: #FFFFFF;
+    --text-dark: #1A1A1A;
+    --text-muted: #6B7280;
+    --border: #E5E7EB;
+    --success: #10B981;
+    --error: #EF4444;
+    --warning: #F59E0B;
+  }
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: 'Inter', 'Outfit', system-ui, sans-serif;
+    background-color: var(--off-white);
+    background-image: url('/background.jpg');
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    color: var(--text-dark);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background-color: var(--teal-pale);
+    color: var(--teal);
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--off-white);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--teal-light);
+    border-radius: 3px;
+  }
+}
+
+@layer utilities {
+  /* Watercolor splash blobs — corner decorations */
+  .splash-teal {
+    background: radial-gradient(circle, rgba(74,173,160,0.35) 0%, rgba(74,173,160,0.0) 70%);
+    border-radius: 50%;
+    filter: blur(40px);
+    pointer-events: none;
+    position: absolute;
+  }
+
+  .splash-peach {
+    background: radial-gradient(circle, rgba(244,164,122,0.35) 0%, rgba(244,164,122,0.0) 70%);
+    border-radius: 50%;
+    filter: blur(40px);
+    pointer-events: none;
+    position: absolute;
+  }
+
+  .splash-orange {
+    background: radial-gradient(circle, rgba(232,132,58,0.30) 0%, rgba(232,132,58,0.0) 70%);
+    border-radius: 50%;
+    filter: blur(40px);
+    pointer-events: none;
+    position: absolute;
+  }
+
+  .splash-blue {
+    background: radial-gradient(circle, rgba(74,144,184,0.25) 0%, rgba(74,144,184,0.0) 70%);
+    border-radius: 50%;
+    filter: blur(40px);
+    pointer-events: none;
+    position: absolute;
+  }
+
+  /* Card hover lift */
+  .card-hover {
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(42,125,111,0.15);
+  }
+
+  /* Teal button */
+  .btn-teal {
+    background-color: var(--teal);
+    color: #fff;
+    padding: 0.5rem 1.25rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    transition: background 0.2s ease, transform 0.15s ease;
+    cursor: pointer;
+    border: none;
+  }
+  .btn-teal:hover {
+    background-color: var(--teal-light);
+    transform: translateY(-1px);
+  }
+  .btn-teal:active { 
+    transform: scale(0.95);
+    background-color: #1e5c51;
+  }
+  /* Mustard/orange button */
+  .btn-mustard {
+    background-color: var(--mustard);
+    color: #fff;
+    padding: 0.5rem 1.25rem;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.03em;
+    transition: background 0.2s ease, transform 0.15s ease;
+    cursor: pointer;
+    border: none;
+  }
+  .btn-mustard:hover {
+    background-color: #d4722d;
+    transform: translateY(-1px);
+  }
+  .btn-mustard:active {
+    transform: scale(0.95);
+    background-color: #b55d21;
+  }
+
+  /* Outline button */
+  .btn-outline {
+    background: transparent;
+    color: var(--teal);
+    border: 1.5px solid var(--teal);
+    padding: 0.5rem 1.25rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+  .btn-outline:hover {
+    background-color: var(--teal);
+    color: #fff;
+  }
+
+  /* Ghost danger */
+  .btn-danger {
+    background: transparent;
+    color: var(--error);
+    border: 1.5px solid var(--error);
+    padding: 0.4rem 1rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.8rem;
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+  .btn-danger:hover {
+    background: var(--error);
+    color: #fff;
+  }
+
+  /* Offer badge */
+  .offer-badge {
+    background: linear-gradient(135deg, var(--peach), var(--mustard));
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    letter-spacing: 0.03em;
+  }
+
+  /* Status badges */
+  .badge-pending { background: #FEF3C7; color: #D97706; }
+  .badge-listed  { background: #D1FAE5; color: #065F46; }
+  .badge-rejected{ background: #FEE2E2; color: #991B1B; }
+  .badge-sold    { background: #E0E7FF; color: #3730A3; }
+
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.65rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 600;
+  }
+
+  /* Input fields */
+  .input-field {
+    width: 100%;
+    padding: 0.625rem 0.875rem;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    background: #fff;
+    color: var(--text-dark);
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .input-field:focus {
+    border-color: var(--teal);
+    box-shadow: 0 0 0 3px rgba(42,125,111,0.12);
+  }
+  .input-field::placeholder { color: #9CA3AF; }
+
+  /* Sidebar nav item */
+  .sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.65rem 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+  }
+  .sidebar-item:hover {
+    background: var(--teal-pale);
+    color: var(--teal);
+  }
+  .sidebar-item.active {
+    background: var(--teal-pale);
+    color: var(--teal);
+    font-weight: 600;
+  }
+
+  /* Table */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+  }
+  .data-table thead th {
+    text-align: left;
+    padding: 0.75rem 1rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    border-bottom: 1.5px solid var(--border);
+    background: #F9FAFB;
+  }
+  .data-table tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+  .data-table tbody tr:hover { background: var(--teal-pale); }
+  .data-table tbody td {
+    padding: 0.875rem 1rem;
+    vertical-align: middle;
+  }
+
+  /* Glass card */
+  .glass-card {
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.6);
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+  }
+
+  /* Animation utilities */
+  .animate-fade-in {
+    animation: fadeIn 0.4s ease forwards;
+  }
+  .animate-slide-up {
+    animation: slideUp 0.35s ease forwards;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes pulse-ring {
+    0%   { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(42,125,111,0.4); }
+    70%  { transform: scale(1);    box-shadow: 0 0 0 10px rgba(42,125,111,0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(42,125,111,0); }
+  }
+}
