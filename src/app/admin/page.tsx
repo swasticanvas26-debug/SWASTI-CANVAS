@@ -15,12 +15,14 @@ export default async function AdminPage() {
     { data: pendingArtworks },
     { data: activeListings },
     { data: totalSalesData },
+    { data: pendingOrders },
   ] = await Promise.all([
     supabase.from('artworks').select('id', { count: 'exact', head: true }).eq('status', 'pending_approval'),
     supabase.from('artworks').select('id', { count: 'exact', head: true }).eq('status', 'listed'),
     supabase.from('artworks').select(`*, seller:users!artworks_seller_id_fkey(id, name)`).eq('status', 'pending_approval').order('created_at'),
     supabase.from('artworks').select(`*, seller:users!artworks_seller_id_fkey(id, name), offer:offers(*)`).eq('status', 'listed').order('created_at', { ascending: false }),
-    supabase.from('orders').select('amount_paid'),
+    supabase.from('orders').select('amount_paid').eq('payment_status', 'confirmed'),
+    supabase.from('orders').select(`*, artwork:artworks(id, title, image_url), user:users(id, name, email)`).eq('payment_status', 'pending').order('purchased_at', { ascending: false }),
   ])
 
   const totalSales = totalSalesData?.reduce((sum, o) => sum + (o.amount_paid ?? 0), 0) ?? 0
@@ -36,6 +38,7 @@ export default async function AdminPage() {
             activeArtworks={activeCount ?? 0}
             pendingApprovals={pendingCount ?? 0}
             sellerRequests={0}
+            pendingOrders={pendingOrders ?? []}
             pendingArtworks={(pendingArtworks ?? []).map((a: any) => ({
               ...a,
               offer: Array.isArray(a.offer) ? (a.offer[0] ?? null) : null,

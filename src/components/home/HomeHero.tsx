@@ -35,7 +35,7 @@ export default function HomeHero({ artworks }: HomeHeroProps) {
     : null
 
   return (
-    <div className="relative h-72 md:h-[400px] overflow-hidden">
+    <div className="relative h-72 md:h-[400px] overflow-hidden mx-3 sm:mx-0 rounded-3xl sm:rounded-none shadow-[0_8px_40px_rgba(0,0,0,0.15)] sm:shadow-none mt-3 sm:mt-0">
       {/* Background image */}
       <Image
         src={art.image_url}

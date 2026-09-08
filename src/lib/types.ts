@@ -1,6 +1,7 @@
 export type UserRole = 'admin' | 'customer' | 'seller'
 export type ArtworkStatus = 'pending_approval' | 'listed' | 'rejected' | 'sold'
 export type TicketStatus = 'open' | 'resolved'
+export type PaymentStatus = 'pending' | 'confirmed' | 'declined'
 
 export interface User {
   id: string
@@ -50,9 +51,15 @@ export interface Order {
   user_id: string
   artwork_id: string
   amount_paid: number
+  payment_method?: string
+  transaction_id?: string
+  transaction_amount?: number
+  payment_status: PaymentStatus
   payment_ref?: string
   purchased_at: string
+  updated_at: string
   artwork?: Artwork
+  user?: User
 }
 
 export interface SupportTicket {

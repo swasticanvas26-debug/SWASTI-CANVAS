@@ -6,9 +6,9 @@ import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import {
   TrendingUp, Image as ImageIcon, Clock, Star,
-  Check, X, Edit2, Tag, Loader2, IndianRupee
+  Check, X, Edit2, Tag, Loader2, IndianRupee, Wallet, AlertCircle
 } from 'lucide-react'
-import type { Artwork } from '@/lib/types'
+import type { Artwork, Order } from '@/lib/types'
 
 interface AdminOverviewProps {
   totalSales: number
@@ -17,6 +17,7 @@ interface AdminOverviewProps {
   sellerRequests: number
   pendingArtworks: Artwork[]
   activeListings: Artwork[]
+  pendingOrders: Order[]
 }
 
 function StatCard({ title, value, icon: Icon, color }: { title: string; value: string | number; icon: any; color: string }) {
@@ -36,7 +37,7 @@ function StatCard({ title, value, icon: Icon, color }: { title: string; value: s
 }
 
 export default function AdminOverview(props: AdminOverviewProps) {
-  const { totalSales, activeArtworks, pendingApprovals, sellerRequests, pendingArtworks, activeListings } = props
+  const { totalSales, activeArtworks, pendingApprovals, sellerRequests, pendingArtworks, activeListings, pendingOrders } = props
   const router = useRouter()
   const [approvingId, setApprovingId] = useState<string | null>(null)
   const [rejectingId, setRejectingId] = useState<string | null>(null)
@@ -45,6 +46,22 @@ export default function AdminOverview(props: AdminOverviewProps) {
   const [offerModal, setOfferModal] = useState<{ artwork: Artwork } | null>(null)
   const [offerDiscount, setOfferDiscount] = useState('')
   const [offerUntil, setOfferUntil] = useState('')
+  const [processingOrderId, setProcessingOrderId] = useState<string | null>(null)
+
+  const handleOrderAction = async (orderId: string, action: 'confirm' | 'decline') => {
+    setProcessingOrderId(orderId)
+    try {
+      const res = await fetch(`/api/admin/orders/${orderId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action }),
+      })
+      if (!res.ok) throw new Error((await res.json()).error)
+      toast.success(action === 'confirm' ? 'Payment confirmed! Artwork unlisted.' : 'Payment declined. Artwork relisted.')
+      router.refresh()
+    } catch (e: any) { toast.error(e.message) }
+    finally { setProcessingOrderId(null) }
+  }
 
   const handleApprove = async (artwork: Artwork) => {
     setPriceModal({ artwork })
@@ -126,6 +143,132 @@ export default function AdminOverview(props: AdminOverviewProps) {
         <StatCard title="Pending Art Approvals" value={pendingApprovals} icon={Clock} color="bg-gradient-to-br from-peach to-mustard" />
         <StatCard title="Seller Requests" value={sellerRequests} icon={Star} color="bg-gradient-to-br from-mustard to-yellow-400" />
       </div>
+
+      {/* Pending Payments */}
+      <section id="pending-payments" className="bg-white rounded-2xl border border-canvas-border shadow-card overflow-hidden">
+        <div className="px-6 py-4 border-b border-canvas-border">
+          <h2 className="font-semibold text-canvas-dark flex items-center gap-2">
+            <Wallet className="w-4 h-4 text-teal" />
+            Pending Payment Verifications
+            {pendingOrders.length > 0 && (
+              <span className="bg-teal text-white text-xs px-2 py-0.5 rounded-full">{pendingOrders.length}</span>
+            )}
+          </h2>
+        </div>
+        {pendingOrders.length === 0 ? (
+          <div className="p-8 text-center text-canvas-muted">No pending payments — all clear! ✅</div>
+        ) : (
+          <>
+            {/* Desktop */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th>Artwork</th>
+                    <th>Customer</th>
+                    <th>Method</th>
+                    <th>Transaction ID / UTR</th>
+                    <th>Claimed Amount</th>
+                    <th>Order Amount</th>
+                    <th>Submitted</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {pendingOrders.map((order: any) => (
+                    <tr key={order.id}>
+                      <td>
+                        <div className="flex items-center gap-2">
+                          {order.artwork?.image_url && (
+                            <div className="relative w-10 h-8 rounded-lg overflow-hidden bg-gray-100 shrink-0">
+                              <Image src={order.artwork.image_url} alt="" fill sizes="40px" className="object-cover" />
+                            </div>
+                          )}
+                          <span className="text-sm font-medium truncate max-w-[120px]">{order.artwork?.title}</span>
+                        </div>
+                      </td>
+                      <td>
+                        <div className="text-sm font-medium">{order.user?.name}</div>
+                        <div className="text-xs text-canvas-muted">{order.user?.email}</div>
+                      </td>
+                      <td>
+                        <span className="text-xs font-semibold uppercase bg-canvas-bg px-2 py-1 rounded-lg">
+                          {order.payment_method === 'upi' ? '📱 UPI' : '🏦 Bank'}
+                        </span>
+                      </td>
+                      <td>
+                        <span className="font-mono text-xs bg-canvas-bg px-2 py-1 rounded-lg">{order.transaction_id}</span>
+                      </td>
+                      <td className={order.transaction_amount === order.amount_paid ? 'text-green-600 font-semibold' : 'text-red-500 font-semibold'}>
+                        ₹{(order.transaction_amount ?? 0).toLocaleString('en-IN')}
+                        {order.transaction_amount !== order.amount_paid && (
+                          <span title="Amount mismatch!">
+                            <AlertCircle className="w-3 h-3 inline ml-1" />
+                          </span>
+                        )}
+                      </td>
+                      <td className="font-semibold">₹{order.amount_paid.toLocaleString('en-IN')}</td>
+                      <td className="text-canvas-muted text-xs">{new Date(order.purchased_at).toLocaleDateString('en-IN')}</td>
+                      <td>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => handleOrderAction(order.id, 'confirm')}
+                            disabled={processingOrderId === order.id}
+                            className="btn-teal text-xs px-3 py-1.5 flex items-center gap-1"
+                          >
+                            {processingOrderId === order.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
+                            Confirm
+                          </button>
+                          <button
+                            onClick={() => handleOrderAction(order.id, 'decline')}
+                            disabled={processingOrderId === order.id}
+                            className="btn-danger text-xs px-3 py-1.5 flex items-center gap-1"
+                          >
+                            <X className="w-3.5 h-3.5" /> Decline
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            {/* Mobile */}
+            <div className="md:hidden p-4 space-y-3">
+              {pendingOrders.map((order: any) => (
+                <div key={order.id} className="border border-canvas-border rounded-xl p-4 space-y-3">
+                  <div className="flex gap-3">
+                    {order.artwork?.image_url && (
+                      <div className="relative w-14 h-14 rounded-lg overflow-hidden bg-gray-100 shrink-0">
+                        <Image src={order.artwork.image_url} alt="" fill sizes="56px" className="object-cover" />
+                      </div>
+                    )}
+                    <div>
+                      <div className="font-semibold text-sm">{order.artwork?.title}</div>
+                      <div className="text-xs text-canvas-muted">{order.user?.name} • {order.payment_method?.toUpperCase()}</div>
+                      <div className="text-xs mt-1 font-mono bg-canvas-bg px-2 py-0.5 rounded">{order.transaction_id}</div>
+                    </div>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-canvas-muted">Order: <strong>₹{order.amount_paid.toLocaleString('en-IN')}</strong></span>
+                    <span className={order.transaction_amount === order.amount_paid ? 'text-green-600' : 'text-red-500'}>
+                      Claimed: <strong>₹{(order.transaction_amount ?? 0).toLocaleString('en-IN')}</strong>
+                    </span>
+                  </div>
+                  <div className="flex gap-2">
+                    <button onClick={() => handleOrderAction(order.id, 'confirm')} disabled={processingOrderId === order.id} className="btn-teal text-xs px-3 py-1.5 flex-1 flex items-center justify-center gap-1">
+                      <Check className="w-3.5 h-3.5" /> Confirm
+                    </button>
+                    <button onClick={() => handleOrderAction(order.id, 'decline')} disabled={processingOrderId === order.id} className="btn-danger text-xs px-3 py-1.5 flex-1 flex items-center justify-center gap-1">
+                      <X className="w-3.5 h-3.5" /> Decline
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+      </section>
 
       {/* Pending Approvals */}
       <section id="pending-approvals" className="bg-white rounded-2xl border border-canvas-border shadow-card overflow-hidden">

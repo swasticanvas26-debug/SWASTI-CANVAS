@@ -21,6 +21,10 @@ DO $$ BEGIN
   CREATE TYPE ticket_status AS ENUM ('open', 'resolved');
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
+DO $$ BEGIN
+  CREATE TYPE payment_status AS ENUM ('pending', 'confirmed', 'declined');
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
 -- ============================================================
 -- TABLES
 -- ============================================================
@@ -69,14 +73,19 @@ CREATE TABLE IF NOT EXISTS cart (
   UNIQUE(user_id, artwork_id)  -- limits user to 1 instance of an artwork in their cart
 );
 
--- Orders (completed purchases)
+-- Orders (purchases awaiting / completed payment)
 CREATE TABLE IF NOT EXISTS orders (
-  id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  user_id         UUID NOT NULL REFERENCES users(id),
-  artwork_id      UUID NOT NULL REFERENCES artworks(id),
-  amount_paid     NUMERIC(12,2) NOT NULL,
-  payment_ref     TEXT,
-  purchased_at    TIMESTAMPTZ DEFAULT NOW()
+  id                 UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id            UUID NOT NULL REFERENCES users(id),
+  artwork_id         UUID NOT NULL REFERENCES artworks(id),
+  amount_paid        NUMERIC(12,2) NOT NULL,
+  payment_method     TEXT,                     -- 'upi' | 'bank_transfer'
+  transaction_id     TEXT,                     -- UTR / Transaction ID submitted by customer
+  transaction_amount NUMERIC(12,2),            -- Amount customer claims to have paid
+  payment_status     payment_status NOT NULL DEFAULT 'pending',
+  payment_ref        TEXT,
+  purchased_at       TIMESTAMPTZ DEFAULT NOW(),
+  updated_at         TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- Support Tickets
@@ -101,6 +110,7 @@ CREATE INDEX IF NOT EXISTS idx_cart_artwork_id ON cart(artwork_id);
 CREATE INDEX IF NOT EXISTS idx_offers_artwork_id ON offers(artwork_id);
 CREATE INDEX IF NOT EXISTS idx_tickets_user_id ON support_tickets(user_id);
 CREATE INDEX IF NOT EXISTS idx_orders_user_id ON orders(user_id);
+CREATE INDEX IF NOT EXISTS idx_orders_payment_status ON orders(payment_status);
 
 -- ============================================================
 -- UPDATED_AT TRIGGER
@@ -123,6 +133,11 @@ CREATE TRIGGER set_tickets_updated_at
   BEFORE UPDATE ON support_tickets
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS set_orders_updated_at ON orders;
+CREATE TRIGGER set_orders_updated_at
+  BEFORE UPDATE ON orders
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
 -- ============================================================
 -- CART EXPIRY FUNCTION (called by cron or API route)
 -- ============================================================
@@ -134,23 +149,47 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- ============================================================
--- CHECKOUT FUNCTION
+-- PAYMENT CONFIRMATION FUNCTION (Admin confirms payment)
 -- ============================================================
-CREATE OR REPLACE FUNCTION process_checkout(p_user_id UUID, p_artwork_ids UUID[])
+CREATE OR REPLACE FUNCTION confirm_order_payment(p_order_id UUID)
 RETURNS void AS $$
+DECLARE
+  v_artwork_id UUID;
 BEGIN
-  -- 1. Decrement quantity
-  UPDATE artworks
-  SET quantity = quantity - 1
-  WHERE id = ANY(p_artwork_ids) AND quantity > 0;
+  -- Get artwork id from order
+  SELECT artwork_id INTO v_artwork_id FROM orders WHERE id = p_order_id;
 
-  -- 2. Mark as sold if quantity reaches 0
-  UPDATE artworks
-  SET status = 'sold'
-  WHERE id = ANY(p_artwork_ids) AND quantity <= 0;
+  -- Mark order as confirmed
+  UPDATE orders SET payment_status = 'confirmed' WHERE id = p_order_id;
 
-  -- 3. Clear the user's cart (Orders are inserted by the caller)
-  DELETE FROM cart WHERE user_id = p_user_id;
+  -- Decrement quantity
+  UPDATE artworks SET quantity = quantity - 1
+  WHERE id = v_artwork_id AND quantity > 0;
+
+  -- Mark artwork as sold if quantity hits 0
+  UPDATE artworks SET status = 'sold'
+  WHERE id = v_artwork_id AND quantity <= 0;
+
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- ============================================================
+-- PAYMENT DECLINE FUNCTION (Admin declines payment)
+-- ============================================================
+CREATE OR REPLACE FUNCTION decline_order_payment(p_order_id UUID)
+RETURNS void AS $$
+DECLARE
+  v_artwork_id UUID;
+BEGIN
+  SELECT artwork_id INTO v_artwork_id FROM orders WHERE id = p_order_id;
+
+  -- Mark order as declined
+  UPDATE orders SET payment_status = 'declined' WHERE id = p_order_id;
+
+  -- Re-list artwork if it was sold (in case of declined after confirm, or if artwork was sold)
+  UPDATE artworks SET status = 'listed'
+  WHERE id = v_artwork_id AND status = 'sold';
+
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
@@ -222,6 +261,9 @@ CREATE POLICY "Users can view their own orders" ON orders
 
 CREATE POLICY "Service role inserts orders" ON orders
   FOR INSERT WITH CHECK (true);
+
+CREATE POLICY "Users can update own pending orders; admins update any" ON orders
+  FOR UPDATE USING (user_id = auth.uid() OR get_user_role() = 'admin');
 
 -- SUPPORT TICKETS policies
 CREATE POLICY "Users can view own tickets; admins view all" ON support_tickets

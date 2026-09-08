@@ -109,6 +109,7 @@ export default function CustomerDashboardClient({ user, orders, tickets, activeT
                       <th>Title</th>
                       <th>Artist</th>
                       <th>Amount Paid</th>
+                      <th>Status</th>
                       <th>Date</th>
                     </tr>
                   </thead>
@@ -125,6 +126,11 @@ export default function CustomerDashboardClient({ user, orders, tickets, activeT
                         <td className="font-medium">{order.artwork?.title}</td>
                         <td className="text-canvas-muted">{order.artwork?.seller?.name}</td>
                         <td className="font-semibold text-teal">₹{order.amount_paid.toLocaleString('en-IN')}</td>
+                        <td>
+                          {order.payment_status === 'confirmed' && <span className="status-badge badge-listed">✅ Confirmed</span>}
+                          {order.payment_status === 'pending' && <span className="status-badge badge-pending">⏳ Pending</span>}
+                          {order.payment_status === 'declined' && <span className="status-badge badge-rejected">❌ Declined</span>}
+                        </td>
                         <td className="text-canvas-muted text-xs">{new Date(order.purchased_at).toLocaleDateString('en-IN')}</td>
                       </tr>
                     ))}
@@ -144,6 +150,11 @@ export default function CustomerDashboardClient({ user, orders, tickets, activeT
                       <div className="font-semibold text-sm">{order.artwork?.title}</div>
                       <div className="text-canvas-muted text-xs">{order.artwork?.seller?.name}</div>
                       <div className="font-bold text-teal mt-1">₹{order.amount_paid.toLocaleString('en-IN')}</div>
+                      <div className="mt-1">
+                        {order.payment_status === 'confirmed' && <span className="status-badge badge-listed">✅ Confirmed</span>}
+                        {order.payment_status === 'pending' && <span className="status-badge badge-pending">⏳ Pending</span>}
+                        {order.payment_status === 'declined' && <span className="status-badge badge-rejected">❌ Declined</span>}
+                      </div>
                       <div className="text-xs text-canvas-muted">{new Date(order.purchased_at).toLocaleDateString('en-IN')}</div>
                     </div>
                   </div>

@@ -32,7 +32,7 @@ export default function ArtworkCard({ artwork, showAddToCart = true, onAddToCart
   const discountedPrice = isOfferActive ? getDiscountedPrice(displayPrice, offer!.discount_percentage) : null
 
   return (
-    <div className="card-hover bg-white rounded-2xl overflow-hidden shadow-card border border-canvas-border group animate-fade-in">
+    <div className="artwork-card group animate-fade-in">
       {/* Image */}
       <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
         <Image

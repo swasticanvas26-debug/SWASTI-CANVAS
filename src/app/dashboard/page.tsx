@@ -1,5 +1,5 @@
 import { requireRole } from '@/lib/auth'
-import { createSupabaseServerClient } from '@/lib/supabase/server'
+import { createSupabaseServerClient, createSupabaseServiceClient } from '@/lib/supabase/server'
 import MainLayout from '@/components/layout/MainLayout'
 import Navbar from '@/components/layout/Navbar'
 import MobileBottomNav from '@/components/layout/MobileBottomNav'
@@ -14,12 +14,17 @@ export default async function DashboardPage({
   const user = await requireRole(['customer', 'seller', 'admin'])
   const supabase = await createSupabaseServerClient()
 
+  // Use service client for orders so that the artwork→seller join is not blocked
+  // by RLS (users policy only exposes own profile; buyers can't read seller rows).
+  // The query is still safely scoped to this user's orders via .eq('user_id', user.id).
+  const serviceClient = await createSupabaseServiceClient()
+
   const [
     { data: orders },
     { data: tickets },
     cartData,
   ] = await Promise.all([
-    supabase
+    serviceClient
       .from('orders')
       .select(`*, artwork:artworks(id, title, image_url, listing_price, seller:users!artworks_seller_id_fkey(name))`)
       .eq('user_id', user.id)

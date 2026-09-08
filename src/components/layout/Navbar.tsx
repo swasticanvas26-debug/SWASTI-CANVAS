@@ -57,7 +57,7 @@ export default function Navbar({ user, cartCount = 0 }: NavbarProps) {
   }
 
   return (
-    <header className="sticky top-0 z-50 bg-transparent backdrop-blur-sm shadow-sm transition-all duration-200">
+    <header className="sticky top-0 z-50 bg-white/70 backdrop-blur-md border-b border-white/40 shadow-sm transition-all duration-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between h-16 gap-4">
 
@@ -66,7 +66,7 @@ export default function Navbar({ user, cartCount = 0 }: NavbarProps) {
             <div className="w-9 h-9 rounded-full bg-gradient-to-br from-teal to-teal-light flex items-center justify-center shadow-teal">
               <Palette className="w-5 h-5 text-white" />
             </div>
-            <div className="hidden sm:block leading-tight">
+            <div className="leading-tight">
               <div className="font-display font-bold text-teal text-lg tracking-tight">SWASTI</div>
               <div className="font-display font-bold text-teal-light text-[10px] tracking-widest -mt-1">CANVAS</div>
             </div>
@@ -215,7 +215,7 @@ export default function Navbar({ user, cartCount = 0 }: NavbarProps) {
 
         {/* Mobile menu */}
         {mobileOpen && (
-          <div className="md:hidden border-t border-canvas-border py-3 space-y-1 animate-slide-up">
+          <div className="md:hidden border-t border-white/40 bg-white/80 backdrop-blur-md py-3 space-y-1 animate-slide-up">
             <form onSubmit={handleSearch} className="flex gap-2 px-2 mb-3">
               <input
                 value={searchVal}
