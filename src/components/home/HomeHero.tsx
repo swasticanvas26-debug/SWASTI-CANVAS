@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import Image from 'next/image'
+import SafeImage from '@/components/shared/SafeImage'
 import type { Artwork } from '@/lib/types'
 import Link from 'next/link'
 
@@ -37,12 +37,13 @@ export default function HomeHero({ artworks }: HomeHeroProps) {
   return (
     <div className="relative h-72 md:h-[400px] overflow-hidden mx-3 sm:mx-0 rounded-3xl sm:rounded-none shadow-[0_8px_40px_rgba(0,0,0,0.15)] sm:shadow-none mt-3 sm:mt-0">
       {/* Background image */}
-      <Image
+      <SafeImage
         src={art.image_url}
         alt={art.title}
         fill
         className="object-cover"
-        priority
+        priority={true}
+        sizes="100vw"
       />
       <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent" />
 

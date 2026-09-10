@@ -1,7 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import Image from 'next/image'
+import ArtworkChatModal from '@/components/shared/ArtworkChatModal'
+import SafeImage from '@/components/shared/SafeImage'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import {
@@ -105,6 +106,7 @@ export default function CustomerDashboardClient({ user, orders, tickets, activeT
                 <table className="data-table">
                   <thead>
                     <tr>
+                      <th>Order ID</th>
                       <th>Artwork</th>
                       <th>Title</th>
                       <th>Artist</th>
@@ -116,10 +118,11 @@ export default function CustomerDashboardClient({ user, orders, tickets, activeT
                   <tbody>
                     {orders.map((order: any) => (
                       <tr key={order.id}>
+                        <td className="font-mono text-xs text-canvas-muted whitespace-nowrap">ORD-{order.id.split('-')[0].toUpperCase()}</td>
                         <td>
                           {order.artwork?.image_url && (
                             <div className="relative w-14 h-10 rounded-lg overflow-hidden bg-gray-100">
-                              <Image src={order.artwork.image_url} alt={order.artwork?.title ?? ''} fill className="object-cover" />
+                              <SafeImage src={order.artwork.image_url} alt={order.artwork?.title ?? ''} fill sizes="56px" className="object-cover" />
                             </div>
                           )}
                         </td>
@@ -140,22 +143,25 @@ export default function CustomerDashboardClient({ user, orders, tickets, activeT
               {/* Mobile */}
               <div className="md:hidden p-4 space-y-3">
                 {orders.map((order: any) => (
-                  <div key={order.id} className="border border-canvas-border rounded-xl p-4 flex gap-3">
-                    {order.artwork?.image_url && (
-                      <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-gray-100 shrink-0">
-                        <Image src={order.artwork.image_url} alt="" fill className="object-cover" />
+                  <div key={order.id} className="border border-canvas-border rounded-xl p-4 flex flex-col gap-3">
+                    <div className="font-mono text-xs text-teal font-medium">ORD-{order.id.split('-')[0].toUpperCase()}</div>
+                    <div className="flex gap-3">
+                      {order.artwork?.image_url && (
+                        <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-gray-100 shrink-0">
+                          <SafeImage src={order.artwork.image_url} alt="" fill sizes="64px" className="object-cover" />
+                        </div>
+                      )}
+                      <div>
+                        <div className="font-semibold text-sm">{order.artwork?.title}</div>
+                        <div className="text-canvas-muted text-xs">{order.artwork?.seller?.name}</div>
+                        <div className="font-bold text-teal mt-1">₹{order.amount_paid.toLocaleString('en-IN')}</div>
+                        <div className="mt-1">
+                          {order.payment_status === 'confirmed' && <span className="status-badge badge-listed">✅ Confirmed</span>}
+                          {order.payment_status === 'pending' && <span className="status-badge badge-pending">⏳ Pending</span>}
+                          {order.payment_status === 'declined' && <span className="status-badge badge-rejected">❌ Declined</span>}
+                        </div>
+                        <div className="text-xs text-canvas-muted mt-1">{new Date(order.purchased_at).toLocaleDateString('en-IN')}</div>
                       </div>
-                    )}
-                    <div>
-                      <div className="font-semibold text-sm">{order.artwork?.title}</div>
-                      <div className="text-canvas-muted text-xs">{order.artwork?.seller?.name}</div>
-                      <div className="font-bold text-teal mt-1">₹{order.amount_paid.toLocaleString('en-IN')}</div>
-                      <div className="mt-1">
-                        {order.payment_status === 'confirmed' && <span className="status-badge badge-listed">✅ Confirmed</span>}
-                        {order.payment_status === 'pending' && <span className="status-badge badge-pending">⏳ Pending</span>}
-                        {order.payment_status === 'declined' && <span className="status-badge badge-rejected">❌ Declined</span>}
-                      </div>
-                      <div className="text-xs text-canvas-muted">{new Date(order.purchased_at).toLocaleDateString('en-IN')}</div>
                     </div>
                   </div>
                 ))}

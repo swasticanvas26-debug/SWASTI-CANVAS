@@ -307,7 +307,7 @@ export default function AdminOverview(props: AdminOverviewProps) {
                     <tr key={artwork.id}>
                       <td>
                         <div className="relative w-16 h-12 rounded-lg overflow-hidden bg-gray-100">
-                          <SafeImage src={artwork.image_url} alt={artwork.title} fill className="object-cover" />
+                          <SafeImage src={artwork.image_url} alt={artwork.title} fill sizes="64px" className="object-cover" />
                         </div>
                       </td>
                       <td className="font-medium">{artwork.title}</td>
@@ -345,7 +345,7 @@ export default function AdminOverview(props: AdminOverviewProps) {
                 <div key={artwork.id} className="border border-canvas-border rounded-xl p-4 space-y-3">
                   <div className="flex gap-3">
                     <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-gray-100 shrink-0">
-                      <SafeImage src={artwork.image_url} alt={artwork.title} fill className="object-cover" />
+                      <SafeImage src={artwork.image_url} alt={artwork.title} fill sizes="64px" className="object-cover" />
                     </div>
                     <div>
                       <div className="font-semibold text-sm">{artwork.title}</div>
@@ -395,7 +395,7 @@ export default function AdminOverview(props: AdminOverviewProps) {
                     <tr key={artwork.id}>
                       <td>
                         <div className="relative w-14 h-10 rounded-lg overflow-hidden bg-gray-100">
-                          <SafeImage src={artwork.image_url} alt={artwork.title} fill className="object-cover" />
+                          <SafeImage src={artwork.image_url} alt={artwork.title} fill sizes="56px" className="object-cover" />
                         </div>
                       </td>
                       <td className="font-medium">{artwork.title}</td>
@@ -438,7 +438,7 @@ export default function AdminOverview(props: AdminOverviewProps) {
                 <div key={artwork.id} className="border border-canvas-border rounded-xl p-4">
                   <div className="flex gap-3 mb-3">
                     <div className="relative w-14 h-14 rounded-lg overflow-hidden bg-gray-100 shrink-0">
-                      <SafeImage src={artwork.image_url} alt={artwork.title} fill className="object-cover" />
+                      <SafeImage src={artwork.image_url} alt={artwork.title} fill sizes="56px" className="object-cover" />
                     </div>
                     <div>
                       <div className="font-semibold text-sm">{artwork.title}</div>

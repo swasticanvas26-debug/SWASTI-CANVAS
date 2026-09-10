@@ -12,6 +12,7 @@ import type { AppUser } from '@/lib/auth'
 import { clsx } from 'clsx'
 import ArtworkChatModal from '@/components/shared/ArtworkChatModal'
 import SellerChatModal from '@/components/shared/SellerChatModal'
+import SafeImage from '@/components/shared/SafeImage'
 
 const CATEGORIES = ['Abstract', 'Landscape', 'Portrait', 'Floral', 'Geometric', 'Mixed Media']
 
@@ -58,8 +59,9 @@ export default function SellerDashboardClient({ user, artworks, stats }: Props) 
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!canUpload) return
-    if (!form.image_url.startsWith('https://drive.google.com/') && !form.image_url.startsWith('https://photos.app.goo.gl/') && !form.image_url.startsWith('https://photos.google.com/')) {
-      toast.error('Only Google Drive and Google Photos links are allowed for images.')
+    // if (!form.image_url.startsWith('https://drive.google.com/') && !form.image_url.startsWith('https://photos.app.goo.gl/') && !form.image_url.startsWith('https://photos.google.com/')) {
+    if (!form.image_url.startsWith('https://drive.google.com/')) {
+      toast.error('Only Google Drive links are allowed for images right now.')
       return
     }
     setLoading(true)
@@ -184,7 +186,7 @@ export default function SellerDashboardClient({ user, artworks, stats }: Props) 
                     <tr key={a.id}>
                       <td>
                         <div className="relative w-14 h-10 rounded-lg overflow-hidden bg-gray-100">
-                          <Image src={a.image_url} alt={a.title} fill className="object-cover" />
+                          <SafeImage src={a.image_url} alt={a.title} fill sizes="56px" className="object-cover" />
                         </div>
                       </td>
                       <td className="font-medium">{a.title}</td>
@@ -207,7 +209,7 @@ export default function SellerDashboardClient({ user, artworks, stats }: Props) 
                 <div key={a.id} className="border border-canvas-border rounded-xl p-4 space-y-3">
                   <div className="flex gap-3">
                     <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-gray-100 shrink-0">
-                      <Image src={a.image_url} alt={a.title} fill className="object-cover" />
+                      <SafeImage src={a.image_url} alt={a.title} fill sizes="64px" className="object-cover" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="font-semibold text-sm truncate">{a.title}</div>
@@ -239,43 +241,28 @@ export default function SellerDashboardClient({ user, artworks, stats }: Props) 
             <form onSubmit={handleUpload} className="space-y-3">
               {preview && (
                 <div className="relative aspect-video rounded-xl overflow-hidden bg-gray-100 flex items-center justify-center">
-                  {preview.includes('drive.google.com') ? (
-                    <Image 
-                      src={preview.includes('/view') ? preview.replace(/\/file\/d\/(.+?)\/view.*/, '/thumbnail?id=$1&sz=w1000') : preview} 
-                      alt="Preview" 
-                      fill 
-                      className="object-cover" 
-                    />
-                  ) : preview.includes('photos.app.goo.gl') || preview.includes('photos.google.com') ? (
-                    <div className="text-center text-canvas-muted p-6">
-                      <div className="text-3xl mb-2">📸</div>
-                      <p className="font-medium text-sm">Google Photos Link Attached</p>
-                      <p className="text-xs mt-1">Image preview not available for Google Photos links, but the admin will be able to view it.</p>
-                    </div>
-                  ) : (
-                    <Image src={preview} alt="Preview" fill className="object-cover" />
-                  )}
+                  <SafeImage src={preview} alt="Preview" fill sizes="(max-width: 768px) 100vw, 400px" className="object-cover" />
                 </div>
               )}
               <div>
-                <label className="block text-sm font-medium mb-1">Image URL (Google Drive / Photos Link)</label>
+                <label className="block text-sm font-medium mb-1">Image URL (Google Drive Link)</label>
                 <input type="url" required value={form.image_url} onChange={e => { 
                   const val = e.target.value
                   setForm(f => ({ ...f, image_url: val }))
                   
                   const isValidLink = val === '' || 
-                    val.startsWith('https://drive.google.com/') || 
-                    val.startsWith('https://photos.app.goo.gl/') ||
-                    val.startsWith('https://photos.google.com/')
+                    val.startsWith('https://drive.google.com/') 
+                    // || val.startsWith('https://photos.app.goo.gl/') ||
+                    // val.startsWith('https://photos.google.com/')
                     
                   if (isValidLink) {
                     setPreview(val)
                   } else {
                     setPreview('')
                   }
-                }} placeholder="https://drive.google.com/... or https://photos.app.goo.gl/..." className="input-field" />
-                {form.image_url && !form.image_url.startsWith('https://drive.google.com/') && !form.image_url.startsWith('https://photos.app.goo.gl/') && !form.image_url.startsWith('https://photos.google.com/') && (
-                  <p className="text-xs text-red-500 mt-1">Please provide a valid Google Drive or Google Photos link.</p>
+                }} placeholder="https://drive.google.com/..." className="input-field" />
+                {form.image_url && !form.image_url.startsWith('https://drive.google.com/') && (
+                  <p className="text-xs text-red-500 mt-1">Please provide a valid Google Drive link.</p>
                 )}
               </div>
               <div>

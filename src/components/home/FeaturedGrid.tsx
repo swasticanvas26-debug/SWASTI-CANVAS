@@ -50,12 +50,13 @@ export default function FeaturedGrid({ artworks, userId }: FeaturedGridProps) {
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-5">
-      {artworks.map(artwork => (
+      {artworks.map((artwork, index) => (
         <ArtworkCard
           key={artwork.id}
           artwork={artwork}
           showAddToCart={artwork.status === 'listed'}
           onAddToCart={() => handleAddToCart(artwork.id)}
+          priority={index < 4}
         />
       ))}
     </div>

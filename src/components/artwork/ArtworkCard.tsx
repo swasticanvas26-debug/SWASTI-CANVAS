@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { ShoppingCart, Tag, Eye } from 'lucide-react'
+import SafeImage from '@/components/shared/SafeImage'
 import { clsx } from 'clsx'
 import type { Artwork } from '@/lib/types'
 
@@ -8,6 +9,7 @@ interface ArtworkCardProps {
   artwork: Artwork
   showAddToCart?: boolean
   onAddToCart?: (artworkId: string) => void
+  priority?: boolean
 }
 
 function formatPrice(amount: number) {
@@ -25,7 +27,7 @@ function getOfferLabel(offer: { discount_percentage: number; valid_until: string
   return `${offer.discount_percentage}% Off till ${day} ${month}`
 }
 
-export default function ArtworkCard({ artwork, showAddToCart = true, onAddToCart }: ArtworkCardProps) {
+export default function ArtworkCard({ artwork, showAddToCart = true, onAddToCart, priority = false }: ArtworkCardProps) {
   const offer = artwork.offer
   const isOfferActive = offer && new Date(offer.valid_until) > new Date()
   const displayPrice = artwork.listing_price ?? artwork.seller_requested_price
@@ -35,12 +37,13 @@ export default function ArtworkCard({ artwork, showAddToCart = true, onAddToCart
     <div className="artwork-card group animate-fade-in">
       {/* Image */}
       <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
-        <Image
+        <SafeImage
           src={artwork.image_url}
           alt={artwork.title}
           fill
           className="object-cover group-hover:scale-105 transition-transform duration-500"
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          priority={priority}
         />
         {/* Category badge */}
         <div className="absolute top-2.5 left-2.5">

@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
-import Image from 'next/image'
 import Link from 'next/link'
+import SafeImage from '@/components/shared/SafeImage'
 import { ArrowLeft, Tag, ShoppingCart, User2 } from 'lucide-react'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
 import { getAppUser } from '@/lib/auth'
@@ -59,7 +59,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
         <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
           {/* Image */}
           <div className="relative aspect-square rounded-2xl overflow-hidden shadow-card-hover bg-gray-100">
-            <Image src={artwork.image_url} alt={artwork.title} fill className="object-cover" priority />
+            <SafeImage src={artwork.image_url} alt={artwork.title} fill className="object-cover" priority={true} sizes="(max-width: 768px) 100vw, 50vw" />
             {offer && (
               <div className="absolute top-4 left-4 offer-badge flex items-center gap-1">
                 <Tag className="w-3 h-3" />

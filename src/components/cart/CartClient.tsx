@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import {
@@ -9,6 +8,7 @@ import {
   Smartphone, Building2, Copy, ChevronRight, AlertCircle, CreditCard,
   ArrowRight, ClipboardCheck
 } from 'lucide-react'
+import SafeImage from '@/components/shared/SafeImage'
 import type { CartItem } from '@/lib/types'
 
 // ─── Payment Config (update these with your real details) ──────────────────
@@ -19,11 +19,11 @@ const PAYMENT_DETAILS = {
     qrPlaceholder: true, // set to false when you have a real QR image URL
   },
   bank: {
-    accountName: 'Swasti Canvas Art Pvt Ltd',
-    accountNumber: '1234567890',
-    ifsc: 'SBIN0001234',
-    bankName: 'State Bank of India',
-    accountType: 'Current',
+    accountName: 'Pratibha Dagar',
+    accountNumber: '07160110005514',
+    ifsc: 'UCBA0000716',
+    bankName: 'UCO Bank Chhara',
+    accountType: 'Savings',
   },
 }
 // ────────────────────────────────────────────────────────────────────────────
@@ -339,8 +339,8 @@ export default function CartClient({ items }: Props) {
 
             return (
               <div key={item.id} className={`bg-white rounded-2xl border ${isExpired ? 'border-red-300 opacity-60' : 'border-canvas-border'} shadow-card p-4 flex gap-4`}>
-                <div className="relative w-24 h-20 rounded-xl overflow-hidden bg-gray-100 shrink-0">
-                  {art?.image_url && <Image src={art.image_url} alt={art.title} fill sizes="96px" className="object-cover" />}
+                <div className="w-24 h-24 bg-gray-100 rounded-xl overflow-hidden relative shrink-0">
+                  {art?.image_url && <SafeImage src={art.image_url} alt={art.title} fill sizes="96px" className="object-cover" />}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="font-semibold text-canvas-dark">{art.title}</div>
