@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Upload, Loader2, Image as ImageIcon, Search, X } from 'lucide-react'
 import toast from 'react-hot-toast'
 import Image from 'next/image'
+import SafeImage from '@/components/shared/SafeImage'
 
 const CATEGORIES = ['Abstract', 'Landscape', 'Portrait', 'Floral', 'Geometric', 'Mixed Media']
 
@@ -178,7 +179,7 @@ export default function AdminNewArtworkForm() {
                       onClick={() => selectImage(img.url)}
                       className="group relative aspect-square rounded-xl overflow-hidden bg-gray-100 border-2 border-transparent hover:border-teal transition-all focus:outline-none focus:ring-2 focus:ring-teal focus:ring-offset-2"
                     >
-                      <Image src={img.url} alt={img.name} fill className="object-cover" />
+                      <SafeImage src={img.url} alt={img.name} fill className="object-cover" />
                       <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
                         <span className="opacity-0 group-hover:opacity-100 bg-teal text-white text-xs font-medium px-2 py-1 rounded shadow-sm transition-opacity">Select</span>
                       </div>

@@ -7,9 +7,21 @@ export async function POST(request: Request) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { data: profile } = await supabase.from('users').select('role').eq('id', user.id).single()
+  const { data: profile } = await supabase.from('users').select('role, listing_enabled, listing_quota').eq('id', user.id).single()
   if (!['seller', 'admin'].includes(profile?.role)) {
     return NextResponse.json({ error: 'Only sellers can upload artworks' }, { status: 403 })
+  }
+
+  if (profile?.role === 'seller') {
+    if (!profile.listing_enabled) {
+      return NextResponse.json({ error: 'Your listing permission is currently disabled. Please contact the Admin.' }, { status: 403 })
+    }
+
+    // Check quota
+    const { count } = await supabase.from('artworks').select('id', { count: 'exact', head: true }).eq('seller_id', user.id)
+    if (count !== null && profile.listing_quota !== null && count >= profile.listing_quota) {
+      return NextResponse.json({ error: `You have reached your listing quota of ${profile.listing_quota} artworks. Please request more quota from the Admin.` }, { status: 403 })
+    }
   }
 
   const body = await request.json()
@@ -17,6 +29,14 @@ export async function POST(request: Request) {
 
   if (!title || !image_url || !seller_requested_price || !category) {
     return NextResponse.json({ error: 'title, image_url, category, seller_requested_price required' }, { status: 400 })
+  }
+
+  const isValidUrl = image_url.startsWith('https://drive.google.com/') || 
+                     image_url.startsWith('https://photos.app.goo.gl/') || 
+                     image_url.startsWith('https://photos.google.com/')
+
+  if (!isValidUrl) {
+    return NextResponse.json({ error: 'Only Google Drive or Google Photos links are allowed for images.' }, { status: 400 })
   }
 
   const isAdmin = profile?.role === 'admin'

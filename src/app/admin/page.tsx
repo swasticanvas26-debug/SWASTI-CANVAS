@@ -5,6 +5,8 @@ import Navbar from '@/components/layout/Navbar'
 import AdminSidebar from '@/components/layout/AdminSidebar'
 import AdminOverview from '@/components/admin/AdminOverview'
 
+export const dynamic = 'force-dynamic'
+
 export default async function AdminPage() {
   const user = await requireRole(['admin'])
   const supabase = await createSupabaseServerClient()
@@ -34,6 +36,7 @@ export default async function AdminPage() {
         <AdminSidebar pendingCount={pendingCount ?? 0} />
         <main className="flex-1 p-6 overflow-auto">
           <AdminOverview
+            user={user as any}
             totalSales={totalSales}
             activeArtworks={activeCount ?? 0}
             pendingApprovals={pendingCount ?? 0}

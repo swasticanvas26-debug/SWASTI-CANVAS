@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
   LayoutDashboard, Clock, PlusSquare, List,
-  Users, LifeBuoy, Wallet, ChevronRight, type LucideIcon
+  Users, LifeBuoy, Wallet, ChevronRight, MessageSquare, type LucideIcon
 } from 'lucide-react'
 import { clsx } from 'clsx'
 
@@ -24,6 +24,9 @@ interface NavItem {
 
 const NAV: NavItem[] = [
   { label: 'Overview', href: '/admin', icon: LayoutDashboard },
+  { label: 'Chats', href: '/admin/chats', icon: MessageSquare, badgeKey: 'sellers' },
+  { label: 'Order History', href: '/admin/orders', icon: List },
+  { label: 'Seller Management', href: '/admin/sellers', icon: Users },
   // { label: 'Pending Approvals', href: '/admin#pending-approvals', icon: Clock, badgeKey: 'pending' },
   { label: 'List New Artwork', href: '/admin/artworks/new', icon: PlusSquare },
   // { label: 'Manage Listings', href: '/admin#active-listings', icon: List },

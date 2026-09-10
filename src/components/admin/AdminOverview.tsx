@@ -2,15 +2,18 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
+import SafeImage from '@/components/shared/SafeImage'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import {
   TrendingUp, Image as ImageIcon, Clock, Star,
-  Check, X, Edit2, Tag, Loader2, IndianRupee, Wallet, AlertCircle
+  Check, X, Edit2, Tag, Loader2, IndianRupee, Wallet, AlertCircle, MessageSquare
 } from 'lucide-react'
-import type { Artwork, Order } from '@/lib/types'
+import type { Artwork, Order, User } from '@/lib/types'
+import ArtworkChatModal from '@/components/shared/ArtworkChatModal'
 
 interface AdminOverviewProps {
+  user: User
   totalSales: number
   activeArtworks: number
   pendingApprovals: number
@@ -37,10 +40,11 @@ function StatCard({ title, value, icon: Icon, color }: { title: string; value: s
 }
 
 export default function AdminOverview(props: AdminOverviewProps) {
-  const { totalSales, activeArtworks, pendingApprovals, sellerRequests, pendingArtworks, activeListings, pendingOrders } = props
+  const { user, totalSales, activeArtworks, pendingApprovals, sellerRequests, pendingArtworks, activeListings, pendingOrders } = props
   const router = useRouter()
   const [approvingId, setApprovingId] = useState<string | null>(null)
   const [rejectingId, setRejectingId] = useState<string | null>(null)
+  const [chatArtwork, setChatArtwork] = useState<Artwork | null>(null)
   const [priceModal, setPriceModal] = useState<{ artwork: Artwork } | null>(null)
   const [priceInput, setPriceInput] = useState('')
   const [offerModal, setOfferModal] = useState<{ artwork: Artwork } | null>(null)
@@ -181,7 +185,7 @@ export default function AdminOverview(props: AdminOverviewProps) {
                         <div className="flex items-center gap-2">
                           {order.artwork?.image_url && (
                             <div className="relative w-10 h-8 rounded-lg overflow-hidden bg-gray-100 shrink-0">
-                              <Image src={order.artwork.image_url} alt="" fill sizes="40px" className="object-cover" />
+                        <SafeImage src={order.artwork.image_url} alt="" fill sizes="40px" className="object-cover" />
                             </div>
                           )}
                           <span className="text-sm font-medium truncate max-w-[120px]">{order.artwork?.title}</span>
@@ -240,7 +244,7 @@ export default function AdminOverview(props: AdminOverviewProps) {
                   <div className="flex gap-3">
                     {order.artwork?.image_url && (
                       <div className="relative w-14 h-14 rounded-lg overflow-hidden bg-gray-100 shrink-0">
-                        <Image src={order.artwork.image_url} alt="" fill sizes="56px" className="object-cover" />
+                        <SafeImage src={order.artwork.image_url} alt="" fill sizes="56px" className="object-cover" />
                       </div>
                     )}
                     <div>
@@ -303,7 +307,7 @@ export default function AdminOverview(props: AdminOverviewProps) {
                     <tr key={artwork.id}>
                       <td>
                         <div className="relative w-16 h-12 rounded-lg overflow-hidden bg-gray-100">
-                          <Image src={artwork.image_url} alt={artwork.title} fill className="object-cover" />
+                          <SafeImage src={artwork.image_url} alt={artwork.title} fill className="object-cover" />
                         </div>
                       </td>
                       <td className="font-medium">{artwork.title}</td>
@@ -312,6 +316,9 @@ export default function AdminOverview(props: AdminOverviewProps) {
                       <td>₹{artwork.seller_requested_price.toLocaleString('en-IN')}</td>
                       <td>
                         <div className="flex items-center gap-2">
+                          <button onClick={() => setChatArtwork(artwork)} className="btn-outline text-xs px-3 py-1.5 flex items-center gap-1">
+                            <MessageSquare className="w-3.5 h-3.5" /> Chat
+                          </button>
                           <button onClick={() => handleApprove(artwork)} className="btn-teal text-xs px-3 py-1.5 flex items-center gap-1">
                             <Check className="w-3.5 h-3.5" /> Approve
                           </button>
@@ -338,7 +345,7 @@ export default function AdminOverview(props: AdminOverviewProps) {
                 <div key={artwork.id} className="border border-canvas-border rounded-xl p-4 space-y-3">
                   <div className="flex gap-3">
                     <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-gray-100 shrink-0">
-                      <Image src={artwork.image_url} alt={artwork.title} fill className="object-cover" />
+                      <SafeImage src={artwork.image_url} alt={artwork.title} fill className="object-cover" />
                     </div>
                     <div>
                       <div className="font-semibold text-sm">{artwork.title}</div>
@@ -348,6 +355,9 @@ export default function AdminOverview(props: AdminOverviewProps) {
                     </div>
                   </div>
                   <div className="flex gap-2">
+                    <button onClick={() => setChatArtwork(artwork)} className="btn-outline text-xs px-3 py-1.5 flex-1 flex items-center justify-center gap-1">
+                      <MessageSquare className="w-3.5 h-3.5" /> Chat
+                    </button>
                     <button onClick={() => handleApprove(artwork)} className="btn-teal text-xs px-3 py-1.5 flex-1">Approve</button>
                     <button onClick={() => handleReject(artwork.id)} className="btn-danger text-xs px-3 py-1.5 flex-1">Reject</button>
                   </div>
@@ -385,7 +395,7 @@ export default function AdminOverview(props: AdminOverviewProps) {
                     <tr key={artwork.id}>
                       <td>
                         <div className="relative w-14 h-10 rounded-lg overflow-hidden bg-gray-100">
-                          <Image src={artwork.image_url} alt={artwork.title} fill className="object-cover" />
+                          <SafeImage src={artwork.image_url} alt={artwork.title} fill className="object-cover" />
                         </div>
                       </td>
                       <td className="font-medium">{artwork.title}</td>
@@ -428,7 +438,7 @@ export default function AdminOverview(props: AdminOverviewProps) {
                 <div key={artwork.id} className="border border-canvas-border rounded-xl p-4">
                   <div className="flex gap-3 mb-3">
                     <div className="relative w-14 h-14 rounded-lg overflow-hidden bg-gray-100 shrink-0">
-                      <Image src={artwork.image_url} alt={artwork.title} fill className="object-cover" />
+                      <SafeImage src={artwork.image_url} alt={artwork.title} fill className="object-cover" />
                     </div>
                     <div>
                       <div className="font-semibold text-sm">{artwork.title}</div>
@@ -504,6 +514,15 @@ export default function AdminOverview(props: AdminOverviewProps) {
           </div>
         </div>
       )} */}
+
+      {/* Chat Modal */}
+      {chatArtwork && (
+        <ArtworkChatModal
+          artwork={chatArtwork}
+          currentUser={user}
+          onClose={() => setChatArtwork(null)}
+        />
+      )}
     </div>
   )
 }

@@ -10,6 +10,9 @@ export interface User {
   role: UserRole
   avatar_url?: string
   created_at: string
+  listing_enabled?: boolean
+  listing_quota?: number
+  permission_requested?: boolean
 }
 
 export interface Artwork {
@@ -72,4 +75,22 @@ export interface SupportTicket {
   created_at: string
   updated_at: string
   user?: User
+}
+
+export interface ArtworkChat {
+  id: string
+  artwork_id: string
+  sender_id: string
+  message: string
+  created_at: string
+  sender?: User
+}
+
+export interface SellerChat {
+  id: string
+  seller_id: string
+  sender_id: string
+  message: string
+  created_at: string
+  sender?: User
 }

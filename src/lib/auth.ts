@@ -9,6 +9,10 @@ export interface AppUser {
   email: string
   role: UserRole
   avatar_url?: string
+  created_at: string
+  listing_enabled?: boolean
+  listing_quota?: number
+  permission_requested?: boolean
 }
 
 export async function getSession() {
