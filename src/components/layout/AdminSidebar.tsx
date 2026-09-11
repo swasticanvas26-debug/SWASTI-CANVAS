@@ -31,7 +31,7 @@ const NAV: NavItem[] = [
   { label: 'List New Artwork', href: '/admin/artworks/new', icon: PlusSquare },
   // { label: 'Manage Listings', href: '/admin#active-listings', icon: List },
   { label: 'User Support', href: '/admin/support', icon: LifeBuoy },
-  { label: 'Payouts', href: '/admin/payouts', icon: Wallet },
+  // { label: 'Payouts', href: '/admin/payouts', icon: Wallet },
 ]
 
 export default function AdminSidebar({

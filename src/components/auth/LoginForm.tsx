@@ -68,7 +68,12 @@ export default function LoginForm() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-canvas-dark mb-1.5">Password</label>
+              <div className="flex justify-between items-center mb-1.5">
+                <label className="block text-sm font-medium text-canvas-dark">Password</label>
+                <Link href="/forgot-password" className="text-xs text-teal font-semibold hover:underline">
+                  Forgot Password?
+                </Link>
+              </div>
               <div className="relative">
                 <input
                   type={showPw ? 'text' : 'password'} required
