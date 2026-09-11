@@ -44,9 +44,7 @@ export default function SignupPage() {
       <div className="relative z-10 w-full max-w-md px-4">
         <div className="glass-card p-8 animate-slide-up">
           <div className="flex flex-col items-center mb-8">
-            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-teal to-teal-light flex items-center justify-center shadow-teal mb-3">
-              <Palette className="w-7 h-7 text-white" />
-            </div>
+            <img src="/logo.jpg" alt="Logo" className="w-14 h-14 object-cover rounded-full shadow-teal mb-3" />
             <h1 className="font-display font-bold text-2xl text-teal">SWASTI CANVAS</h1>
             <p className="text-canvas-muted text-xs tracking-widest">ART FOR EVERYONE</p>
           </div>

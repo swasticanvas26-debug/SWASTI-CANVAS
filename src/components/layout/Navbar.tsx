@@ -63,9 +63,7 @@ export default function Navbar({ user, cartCount = 0 }: NavbarProps) {
 
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 shrink-0">
-            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-teal to-teal-light flex items-center justify-center shadow-teal">
-              <Palette className="w-5 h-5 text-white" />
-            </div>
+            <img src="/logo.jpg" alt="Logo" className="w-9 h-9 object-cover rounded-full shadow-teal" />
             <div className="leading-tight">
               <div className="font-display font-bold text-teal text-lg tracking-tight">SWASTI</div>
               <div className="font-display font-bold text-teal-light text-[10px] tracking-widest -mt-1">CANVAS</div>

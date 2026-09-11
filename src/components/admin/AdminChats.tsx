@@ -227,8 +227,8 @@ export default function AdminChats({ admin, sellers }: Props) {
                       <div className={clsx(
                         "px-4 py-2.5 rounded-2xl max-w-[85%] text-sm shadow-sm",
                         isMe 
-                          ? "bg-teal text-white rounded-tr-sm" 
-                          : "bg-white border border-canvas-border text-canvas-dark rounded-tl-sm"
+                          ? "bg-teal-pale text-black rounded-tr-sm border border-teal/20" 
+                          : "bg-white border border-canvas-border text-black rounded-tl-sm"
                       )}>
                         {renderMessageContent(msg.message)}
                       </div>
