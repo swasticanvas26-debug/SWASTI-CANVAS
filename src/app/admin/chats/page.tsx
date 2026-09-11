@@ -27,9 +27,9 @@ export default async function AdminChatsPage() {
   return (
     <MainLayout>
       <Navbar user={user} />
-      <div className="flex min-h-screen">
+      <div className="flex flex-col md:flex-row min-h-screen">
         <AdminSidebar pendingCount={pendingCount ?? 0} />
-        <main className="flex-1 p-6 overflow-auto bg-[#F9FAFB]">
+        <main className="flex-1 p-2 md:p-6 overflow-auto bg-[#F9FAFB]">
           <div className="animate-fade-in space-y-6">
             <div className="flex items-center justify-between">
               <div>

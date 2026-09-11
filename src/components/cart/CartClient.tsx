@@ -14,15 +14,15 @@ import type { CartItem } from '@/lib/types'
 // ─── Payment Config (update these with your real details) ──────────────────
 const PAYMENT_DETAILS = {
   upi: {
-    id: 'swasticanvas@upi',
-    name: 'Swasti Canvas',
-    qrPlaceholder: true, // set to false when you have a real QR image URL
+    id: 'pratibhadagardalal@okhdfcbank',
+    name: 'Pratibha Dagar',
+    qrPlaceholder: false, // set to false when you have a real QR image URL
   },
   bank: {
     accountName: 'Pratibha Dagar',
-    accountNumber: '07160110005514',
-    ifsc: 'UCBA0000716',
-    bankName: 'UCO Bank Chhara',
+    accountNumber: '1512000100660143',
+    ifsc: 'PUNB0151200',
+    bankName: 'Punjab National Bank',
     accountType: 'Savings',
   },
 }
@@ -221,12 +221,9 @@ export default function CartClient({ items }: Props) {
           {isUpi ? (
             <div className="text-center">
               <div className="text-sm font-semibold text-canvas-dark mb-3">Scan QR or pay to UPI ID</div>
-              {/* QR Placeholder */}
-              <div className="w-44 h-44 rounded-2xl bg-gray-100 border-2 border-dashed border-canvas-border flex items-center justify-center mx-auto mb-4">
-                <div className="text-center text-canvas-muted text-xs px-2">
-                  <Smartphone className="w-8 h-8 mx-auto mb-2 opacity-30" />
-                  QR Code<br />(Coming Soon)
-                </div>
+              {/* QR Code */}
+              <div className="w-44 h-44 rounded-2xl bg-white border border-canvas-border flex items-center justify-center mx-auto mb-4 overflow-hidden relative shadow-sm">
+                <SafeImage src="/images/upi-qr.png" alt="UPI QR Code" fill sizes="176px" className="object-contain p-2" />
               </div>
               <div className="bg-teal-pale rounded-xl p-3 flex items-center justify-between gap-2">
                 <div>

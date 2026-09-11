@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { Search, Loader2, Send, CheckCircle, XCircle, MessageSquare } from 'lucide-react'
+import { Search, Loader2, Send, CheckCircle, XCircle, MessageSquare, ArrowLeft } from 'lucide-react'
 import toast from 'react-hot-toast'
 import type { AppUser } from '@/lib/auth'
 import type { SellerChat } from '@/lib/types'
@@ -114,9 +114,12 @@ export default function AdminChats({ admin, sellers }: Props) {
   }
 
   return (
-    <div className="flex h-[calc(100vh-8rem)] bg-white rounded-2xl border border-canvas-border shadow-card overflow-hidden">
+    <div className="flex flex-col md:flex-row h-[calc(100vh-8rem)] bg-white rounded-2xl border border-canvas-border shadow-card overflow-hidden">
       {/* Sidebar List */}
-      <div className="w-80 border-r border-canvas-border flex flex-col shrink-0">
+      <div className={clsx(
+        "border-canvas-border flex flex-col shrink-0",
+        selectedSellerId ? "hidden md:flex md:w-80 md:border-r" : "w-full flex-1 md:w-80 md:border-r"
+      )}>
         <div className="p-4 border-b border-canvas-border">
           <h2 className="font-semibold text-lg">Seller Chats</h2>
           <p className="text-xs text-canvas-muted">Manage permissions</p>
@@ -175,14 +178,25 @@ export default function AdminChats({ admin, sellers }: Props) {
       </div>
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col bg-[#F9FAFB]">
+      <div className={clsx(
+        "flex-1 flex flex-col bg-[#F9FAFB]",
+        !selectedSellerId ? "hidden md:flex" : "flex"
+      )}>
         {selectedSeller ? (
           <>
             {/* Chat Header */}
-            <div className="px-6 py-4 border-b border-canvas-border bg-white flex items-center justify-between">
-              <div>
-                <h3 className="font-display font-bold text-lg">{selectedSeller.name}</h3>
-                <p className="text-xs text-canvas-muted">{selectedSeller.email}</p>
+            <div className="px-4 md:px-6 py-4 border-b border-canvas-border bg-white flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <button
+                  className="md:hidden p-1 -ml-1 text-canvas-muted hover:text-canvas-dark rounded-full hover:bg-gray-100"
+                  onClick={() => setSelectedSellerId(null)}
+                >
+                  <ArrowLeft className="w-5 h-5" />
+                </button>
+                <div>
+                  <h3 className="font-display font-bold text-lg leading-tight">{selectedSeller.name}</h3>
+                  <p className="text-xs text-canvas-muted">{selectedSeller.email}</p>
+                </div>
               </div>
               
               {selectedSeller.permission_requested && (

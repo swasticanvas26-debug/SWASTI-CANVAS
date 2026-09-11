@@ -20,7 +20,7 @@ export default async function AdminSupportPage() {
   return (
     <MainLayout>
       <Navbar user={user} />
-      <div className="flex min-h-screen">
+      <div className="flex flex-col md:flex-row min-h-screen">
         <AdminSidebar pendingCount={pendingCount ?? 0} sellerRequestCount={sellerCount ?? 0} />
         <main className="flex-1 p-6 overflow-auto">
           <AdminSupportPanel tickets={tickets ?? []} />
