@@ -64,3 +64,7 @@ Thumbs.db
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# portfolio assets
+documentation.md
+dependencies.md
