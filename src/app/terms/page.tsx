@@ -5,7 +5,7 @@ import { createSupabaseServerClient } from '@/lib/supabase/server'
 export default async function TermsPage() {
   const supabase = await createSupabaseServerClient()
   const { data: { user } } = await supabase.auth.getUser()
-  const appUser = user ? { id: user.id, email: user.email!, name: user.user_metadata?.name || '', role: user.user_metadata?.role || 'customer' } : null
+  const appUser = user ? { id: user.id, email: user.email!, name: user.user_metadata?.name || '', role: user.user_metadata?.role || 'customer', created_at: user.created_at } : null
 
   return (
     <MainLayout>
