@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import SafeImage from '@/components/shared/SafeImage'
 import { ArrowLeft, Tag, ShoppingCart, User2 } from 'lucide-react'
-import { createSupabaseServerClient } from '@/lib/supabase/server'
+import { createSupabaseServerClient, createSupabaseServiceClient } from '@/lib/supabase/server'
 import { getAppUser } from '@/lib/auth'
 import MainLayout from '@/components/layout/MainLayout'
 import Navbar from '@/components/layout/Navbar'
@@ -17,9 +17,10 @@ interface Props {
 export default async function ArtworkDetailPage({ params }: Props) {
   const { id } = await params
   const supabase = await createSupabaseServerClient()
+  const serviceClient = await createSupabaseServiceClient()
   const user = await getAppUser()
 
-  const { data: artwork } = await supabase
+  const { data: artwork } = await serviceClient
     .from('artworks')
     .select(`
       *,

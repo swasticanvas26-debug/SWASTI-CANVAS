@@ -395,25 +395,11 @@ export default function CustomerDashboardClient({ user, orders, tickets, activeT
               
               <div>
                 <h4 className="font-semibold text-sm mb-2 text-canvas-dark">Artwork Feedback</h4>
-                <div className="flex items-center gap-2 mb-3">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <button key={star} type="button" onClick={() => setReviewForm(f => ({ ...f, artwork_rating: star }))}>
-                      <Star className={clsx("w-6 h-6", star <= reviewForm.artwork_rating ? "text-mustard fill-mustard" : "text-canvas-border")} />
-                    </button>
-                  ))}
-                </div>
                 <textarea required rows={3} value={reviewForm.artwork_comment} onChange={e => setReviewForm(f => ({ ...f, artwork_comment: e.target.value }))} placeholder="What did you think of the artwork?" className="input-field resize-none text-sm" />
               </div>
 
               <div>
                 <h4 className="font-semibold text-sm mb-2 text-canvas-dark">Website Experience</h4>
-                <div className="flex items-center gap-2 mb-3">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <button key={star} type="button" onClick={() => setReviewForm(f => ({ ...f, website_rating: star }))}>
-                      <Star className={clsx("w-6 h-6", star <= reviewForm.website_rating ? "text-mustard fill-mustard" : "text-canvas-border")} />
-                    </button>
-                  ))}
-                </div>
                 <textarea required rows={2} value={reviewForm.website_comment} onChange={e => setReviewForm(f => ({ ...f, website_comment: e.target.value }))} placeholder="How was your experience using Swasti Canvas?" className="input-field resize-none text-sm" />
               </div>
 
