@@ -19,6 +19,7 @@ export default async function ReviewsPage() {
     .select(`
       id,
       artwork_comment,
+      website_comment,
       created_at,
       user:users(name),
       artwork:artworks(id, title, image_url)
@@ -56,7 +57,7 @@ export default async function ReviewsPage() {
                 
                 {/* Artwork Reference */}
                 {review.artwork && (
-                  <Link href={`/artworks/${review.artwork.id}`} className="flex items-center gap-3 mb-4 p-2 -mt-2 -mx-2 rounded-xl hover:bg-canvas-bg transition-colors">
+                  <div className="flex items-center gap-3 mb-4 p-2 -mt-2 -mx-2 rounded-xl transition-colors">
                     {review.artwork.image_url ? (
                       <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 relative shrink-0">
                         <SafeImage src={review.artwork.image_url} alt={review.artwork.title} fill className="object-cover" sizes="48px" />
@@ -68,10 +69,22 @@ export default async function ReviewsPage() {
                       <div className="text-xs text-canvas-muted mb-0.5">Reviewed artwork:</div>
                       <div className="font-semibold text-sm text-teal line-clamp-1">{review.artwork.title}</div>
                     </div>
-                  </Link>
+                  </div>
                 )}
                 
-                <p className="text-sm text-canvas-dark leading-relaxed mb-4 italic">"{review.artwork_comment}"</p>
+                {review.artwork_comment && (
+                  <div className="mb-4">
+                    <div className="text-xs font-semibold text-canvas-muted mb-1 uppercase tracking-wider">Artwork Review</div>
+                    <p className="text-sm text-canvas-dark leading-relaxed italic">"{review.artwork_comment}"</p>
+                  </div>
+                )}
+
+                {review.website_comment && (
+                  <div className="mb-4">
+                    <div className="text-xs font-semibold text-canvas-muted mb-1 uppercase tracking-wider">Site Review</div>
+                    <p className="text-sm text-canvas-dark leading-relaxed italic">"{review.website_comment}"</p>
+                  </div>
+                )}
                 
                 <div className="flex items-center justify-between border-t border-canvas-border pt-4">
                   <div className="font-semibold text-sm">{review.user?.name || 'Verified Buyer'}</div>
