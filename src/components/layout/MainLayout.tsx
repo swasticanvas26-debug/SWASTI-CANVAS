@@ -13,7 +13,7 @@ export default function MainLayout({ children }: { children: ReactNode }) {
       <div className="blob-br" aria-hidden="true" />
 
       {/* All page content floats above */}
-      <div className="relative z-10 flex-1 flex flex-col">
+      <div className="relative z-20 flex-1 flex flex-col">
         {children}
       </div>
       <Footer />

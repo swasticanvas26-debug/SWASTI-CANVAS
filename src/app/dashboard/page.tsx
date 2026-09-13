@@ -40,7 +40,7 @@ export default async function DashboardPage({
   return (
     <MainLayout>
       <Navbar user={user} cartCount={cartData.count ?? 0} />
-      <main className="max-w-5xl mx-auto px-4 sm:px-6 py-8 pb-24 md:pb-8">
+      <main className="flex-1 w-full max-w-5xl mx-auto px-4 sm:px-6 py-8 pb-32 md:pb-12">
         <CustomerDashboardClient
           user={user}
           orders={orders ?? []}

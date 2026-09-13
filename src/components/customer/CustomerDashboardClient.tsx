@@ -11,7 +11,7 @@ import {
 } from 'lucide-react'
 import { clsx } from 'clsx'
 import type { AppUser } from '@/lib/auth'
-import type { Order, SupportTicket } from '@/lib/types'
+import { parseAddress, type AddressDetails, type Order, type SupportTicket } from '@/lib/types'
 
 interface Props {
   user: AppUser
@@ -34,7 +34,18 @@ export default function CustomerDashboardClient({ user, orders, tickets, activeT
   const [submitting, setSubmitting] = useState(false)
   const [upgrading, setUpgrading] = useState(false)
   const [showTicketForm, setShowTicketForm] = useState(false)
-  const [address, setAddress] = useState(user.address || '')
+
+  const initialAddress = parseAddress(user.address) || {
+    fullName: user.name || '',
+    phone: '',
+    pincode: '',
+    houseNo: '',
+    area: '',
+    landmark: '',
+    city: '',
+    state: ''
+  }
+  const [addressObj, setAddressObj] = useState<AddressDetails>(initialAddress)
   const [savingAddress, setSavingAddress] = useState(false)
 
   const [reviewOrder, setReviewOrder] = useState<Order | null>(null)
@@ -70,7 +81,7 @@ export default function CustomerDashboardClient({ user, orders, tickets, activeT
       const res = await fetch('/api/user/address', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ address }),
+        body: JSON.stringify({ address: JSON.stringify(addressObj) }),
       })
       if (!res.ok) throw new Error((await res.json()).error)
       toast.success('Address saved successfully!')
@@ -248,21 +259,44 @@ export default function CustomerDashboardClient({ user, orders, tickets, activeT
               </div>
             </div>
             <form onSubmit={handleAddressSubmit} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium mb-1.5">Full Address</label>
-                <textarea
-                  required
-                  rows={4}
-                  value={address}
-                  onChange={e => setAddress(e.target.value)}
-                  placeholder="Enter your street address, city, state, and PIN code..."
-                  className="input-field resize-none"
-                />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1.5">Full Name</label>
+                  <input required type="text" value={addressObj.fullName} onChange={e => setAddressObj({...addressObj, fullName: e.target.value})} className="input-field" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1.5">Mobile Number</label>
+                  <input required type="tel" pattern="[0-9]{10}" title="10 digit mobile number" value={addressObj.phone} onChange={e => setAddressObj({...addressObj, phone: e.target.value})} className="input-field" placeholder="10-digit number" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1.5">PIN Code</label>
+                  <input required type="text" pattern="[0-9]{6}" title="6 digit PIN code" value={addressObj.pincode} onChange={e => setAddressObj({...addressObj, pincode: e.target.value})} className="input-field" placeholder="6 digits" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1.5">Flat, House no., Building</label>
+                  <input required type="text" value={addressObj.houseNo} onChange={e => setAddressObj({...addressObj, houseNo: e.target.value})} className="input-field" />
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium mb-1.5">Area, Street, Sector, Village</label>
+                  <input required type="text" value={addressObj.area} onChange={e => setAddressObj({...addressObj, area: e.target.value})} className="input-field" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1.5">Landmark (Optional)</label>
+                  <input type="text" value={addressObj.landmark || ''} onChange={e => setAddressObj({...addressObj, landmark: e.target.value})} className="input-field" placeholder="E.g. near apollo hospital" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1.5">Town/City</label>
+                  <input required type="text" value={addressObj.city} onChange={e => setAddressObj({...addressObj, city: e.target.value})} className="input-field" />
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium mb-1.5">State</label>
+                  <input required type="text" value={addressObj.state} onChange={e => setAddressObj({...addressObj, state: e.target.value})} className="input-field" />
+                </div>
               </div>
               <button
                 type="submit"
-                disabled={savingAddress || address === user.address}
-                className="btn-teal w-full py-3 flex items-center justify-center gap-2 font-bold disabled:opacity-50"
+                disabled={savingAddress}
+                className="btn-teal w-full py-3 flex items-center justify-center gap-2 font-bold disabled:opacity-50 mt-2"
               >
                 {savingAddress ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
                 {savingAddress ? 'Saving…' : 'Save Address'}

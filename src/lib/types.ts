@@ -113,3 +113,42 @@ export interface OrderReview {
   user?: User
   artwork?: Artwork
 }
+
+// ────────────────────────────────────────────────────────────────────────────
+// Address Types & Utils
+// ────────────────────────────────────────────────────────────────────────────
+export interface AddressDetails {
+  fullName: string
+  phone: string
+  pincode: string
+  houseNo: string
+  area: string
+  landmark?: string
+  city: string
+  state: string
+}
+
+export function parseAddress(addressStr?: string): AddressDetails | null {
+  if (!addressStr) return null
+  try {
+    const parsed = JSON.parse(addressStr)
+    if (parsed && typeof parsed === 'object' && 'fullName' in parsed) {
+      return parsed as AddressDetails
+    }
+    return null
+  } catch (e) {
+    // If it fails to parse, it's likely a legacy raw text address
+    return null
+  }
+}
+
+export function formatAddress(address: AddressDetails): string {
+  const parts = [
+    address.fullName,
+    address.phone,
+    [address.houseNo, address.area].filter(Boolean).join(', '),
+    address.landmark ? `Landmark: ${address.landmark}` : null,
+    `${address.city}, ${address.state} - ${address.pincode}`
+  ]
+  return parts.filter(Boolean).join('\n')
+}

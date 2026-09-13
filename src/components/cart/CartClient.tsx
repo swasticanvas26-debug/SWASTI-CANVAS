@@ -9,7 +9,7 @@ import {
   ArrowRight, ClipboardCheck, MapPin
 } from 'lucide-react'
 import SafeImage from '@/components/shared/SafeImage'
-import type { CartItem } from '@/lib/types'
+import { parseAddress, formatAddress, type AddressDetails, type CartItem } from '@/lib/types'
 
 // ─── Payment Config (update these with your real details) ──────────────────
 const PAYMENT_DETAILS = {
@@ -48,7 +48,15 @@ export default function CartClient({ items, userAddress }: Props) {
   const [timers, setTimers] = useState<Record<string, number>>({})
   const [removing, setRemoving] = useState<string | null>(null)
   const [step, setStep] = useState<'cart' | 'address' | 'method' | 'pay' | 'success'>('cart')
-  const [shippingAddress, setShippingAddress] = useState(userAddress || '')
+  
+  const parsedAddress = parseAddress(userAddress)
+  const [addressObj, setAddressObj] = useState<AddressDetails | null>(parsedAddress)
+  const [isEditingAddress, setIsEditingAddress] = useState(!parsedAddress)
+  const [editForm, setEditForm] = useState<AddressDetails>(parsedAddress || {
+    fullName: '', phone: '', pincode: '', houseNo: '', area: '', landmark: '', city: '', state: ''
+  })
+
+  const [shippingAddress, setShippingAddress] = useState(parsedAddress ? formatAddress(parsedAddress) : '')
   const [payMethod, setPayMethod] = useState<'upi' | 'bank_transfer' | null>(null)
   const [txId, setTxId] = useState('')
   const [txAmount, setTxAmount] = useState('')
@@ -169,34 +177,86 @@ export default function CartClient({ items, userAddress }: Props) {
         <p className="text-canvas-muted text-sm mb-6">Where should we deliver the artwork?</p>
 
         <div className="bg-white border border-canvas-border rounded-2xl shadow-card p-5 mb-5 space-y-4">
-          <div className="font-semibold text-canvas-dark flex items-center gap-2">
-            <MapPin className="w-4 h-4 text-teal" />
-            Delivery Details
+          <div className="font-semibold text-canvas-dark flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <MapPin className="w-4 h-4 text-teal" />
+              Delivery Details
+            </div>
+            {!isEditingAddress && (
+              <button onClick={() => setIsEditingAddress(true)} className="text-sm text-teal font-semibold">Edit</button>
+            )}
           </div>
-          <div>
-            <label className="block text-sm font-medium mb-1.5">
-              Full Address <span className="text-red-500">*</span>
-            </label>
-            <textarea
-              value={shippingAddress}
-              onChange={e => setShippingAddress(e.target.value)}
-              placeholder="Enter your street address, city, state, and PIN code..."
-              className="input-field resize-none"
-              rows={4}
-            />
-          </div>
-          <button
-            onClick={() => {
-              if (!shippingAddress.trim()) {
-                toast.error('Please enter a valid shipping address')
-                return
-              }
-              setStep('method')
-            }}
-            className="btn-teal w-full py-3 flex items-center justify-center gap-2 font-bold"
-          >
-            Continue to Payment <ArrowRight className="w-4 h-4" />
-          </button>
+          
+          {isEditingAddress ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+              <div>
+                <label className="block text-xs font-medium mb-1">Full Name</label>
+                <input required type="text" value={editForm.fullName} onChange={e => setEditForm({...editForm, fullName: e.target.value})} className="input-field py-2" />
+              </div>
+              <div>
+                <label className="block text-xs font-medium mb-1">Mobile Number</label>
+                <input required type="tel" value={editForm.phone} onChange={e => setEditForm({...editForm, phone: e.target.value})} className="input-field py-2" />
+              </div>
+              <div>
+                <label className="block text-xs font-medium mb-1">PIN Code</label>
+                <input required type="text" value={editForm.pincode} onChange={e => setEditForm({...editForm, pincode: e.target.value})} className="input-field py-2" />
+              </div>
+              <div>
+                <label className="block text-xs font-medium mb-1">Flat, House no.</label>
+                <input required type="text" value={editForm.houseNo} onChange={e => setEditForm({...editForm, houseNo: e.target.value})} className="input-field py-2" />
+              </div>
+              <div className="md:col-span-2">
+                <label className="block text-xs font-medium mb-1">Area, Street, Sector</label>
+                <input required type="text" value={editForm.area} onChange={e => setEditForm({...editForm, area: e.target.value})} className="input-field py-2" />
+              </div>
+              <div>
+                <label className="block text-xs font-medium mb-1">Landmark (Optional)</label>
+                <input type="text" value={editForm.landmark || ''} onChange={e => setEditForm({...editForm, landmark: e.target.value})} className="input-field py-2" />
+              </div>
+              <div>
+                <label className="block text-xs font-medium mb-1">Town/City</label>
+                <input required type="text" value={editForm.city} onChange={e => setEditForm({...editForm, city: e.target.value})} className="input-field py-2" />
+              </div>
+              <div className="md:col-span-2">
+                <label className="block text-xs font-medium mb-1">State</label>
+                <input required type="text" value={editForm.state} onChange={e => setEditForm({...editForm, state: e.target.value})} className="input-field py-2" />
+              </div>
+              <div className="md:col-span-2 mt-2">
+                <button
+                  onClick={() => {
+                    if (!editForm.fullName || !editForm.phone || !editForm.pincode || !editForm.houseNo || !editForm.area || !editForm.city || !editForm.state) {
+                      toast.error('Please fill all required fields')
+                      return
+                    }
+                    setAddressObj(editForm)
+                    setIsEditingAddress(false)
+                  }}
+                  className="btn-teal w-full py-2.5 font-bold"
+                >
+                  Use this Address
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="bg-canvas-bg rounded-xl p-4 text-sm mt-4">
+              <div className="font-bold text-canvas-dark text-base mb-1">{addressObj?.fullName}</div>
+              <div className="text-canvas-muted whitespace-pre-wrap leading-relaxed">{addressObj ? formatAddress(addressObj).split('\n').slice(2).join('\n') : ''}</div>
+              <div className="font-medium mt-3 text-canvas-dark flex items-center gap-2">📞 {addressObj?.phone}</div>
+            </div>
+          )}
+
+          {!isEditingAddress && (
+            <button
+              onClick={() => {
+                if (!addressObj) return
+                setShippingAddress(formatAddress(addressObj))
+                setStep('method')
+              }}
+              className="btn-teal w-full py-3 flex items-center justify-center gap-2 font-bold mt-2"
+            >
+              Continue to Payment <ArrowRight className="w-4 h-4" />
+            </button>
+          )}
         </div>
       </div>
     )
