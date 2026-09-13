@@ -33,8 +33,10 @@ export default function SignupPage() {
         }
       })
       if (error) throw new Error(error.message)
-      toast.success('Confirmation link sent to your email!')
-      setStep(2)
+      
+      toast.success('Account created successfully!')
+      // setStep(2) // Temporarily commented out email confirmation screen
+      router.push('/login')
     } catch (err: any) {
       toast.error(err.message ?? 'Registration failed')
     } finally {
