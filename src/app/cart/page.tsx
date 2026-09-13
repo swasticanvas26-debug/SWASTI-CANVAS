@@ -35,8 +35,8 @@ export default async function CartPage() {
   return (
     <MainLayout>
       <Navbar user={user} cartCount={mapped.length} />
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-8 pb-24 md:pb-8">
-        <CartClient items={mapped} />
+      <main className="flex-1 w-full max-w-4xl mx-auto px-4 sm:px-6 py-8 pb-32 md:pb-12">
+        <CartClient items={mapped} userAddress={user.address} />
       </main>
       <MobileBottomNav />
     </MainLayout>

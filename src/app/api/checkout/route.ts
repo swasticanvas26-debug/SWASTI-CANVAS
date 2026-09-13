@@ -8,7 +8,7 @@ export async function POST(request: Request) {
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const body = await request.json()
-  const { payment_method, transaction_id, transaction_amount } = body
+  const { payment_method, transaction_id, transaction_amount, shipping_address } = body
 
   if (!payment_method || !['upi', 'bank_transfer'].includes(payment_method)) {
     return NextResponse.json({ error: 'Invalid payment method' }, { status: 400 })
@@ -18,6 +18,9 @@ export async function POST(request: Request) {
   }
   if (!transaction_amount || transaction_amount <= 0) {
     return NextResponse.json({ error: 'Transaction amount is required' }, { status: 400 })
+  }
+  if (!shipping_address?.trim()) {
+    return NextResponse.json({ error: 'Shipping address is required' }, { status: 400 })
   }
 
   // Get user's cart items
@@ -58,6 +61,7 @@ export async function POST(request: Request) {
     transaction_id: transaction_id.trim(),
     transaction_amount: Number(transaction_amount),
     payment_status: 'pending',
+    shipping_address: shipping_address.trim(),
   }))
 
   const { error: insertError } = await supabase.from('orders').insert(orderInserts)

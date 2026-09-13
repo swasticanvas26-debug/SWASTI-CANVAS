@@ -8,6 +8,7 @@ import MainLayout from '@/components/layout/MainLayout'
 import Navbar from '@/components/layout/Navbar'
 import MobileBottomNav from '@/components/layout/MobileBottomNav'
 import AddToCartButton from '@/components/artwork/AddToCartButton'
+import ArtworkReviews from '@/components/artwork/ArtworkReviews'
 
 interface Props {
   params: Promise<{ id: string }>
@@ -23,7 +24,8 @@ export default async function ArtworkDetailPage({ params }: Props) {
     .select(`
       *,
       seller:users!artworks_seller_id_fkey(id, name, email, role),
-      offer:offers(*)
+      offer:offers(*),
+      reviews:order_reviews(id, artwork_rating, artwork_comment, created_at, user:users(name))
     `)
     .eq('id', id)
     .eq('status', 'listed')
@@ -127,6 +129,9 @@ export default async function ArtworkDetailPage({ params }: Props) {
             )}
           </div>
         </div>
+
+        {/* Reviews Section */}
+        <ArtworkReviews reviews={artwork.reviews || []} />
       </main>
       <MobileBottomNav />
     </MainLayout>

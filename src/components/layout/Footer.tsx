@@ -32,7 +32,7 @@ export default function Footer() {
               <li><Link href="/" className="text-canvas-muted hover:text-teal text-sm transition-colors">Home</Link></li>
               <li><Link href="/artworks" className="text-canvas-muted hover:text-teal text-sm transition-colors">Browse Artworks</Link></li>
               <li><Link href="/login" className="text-canvas-muted hover:text-teal text-sm transition-colors">Sign In</Link></li>
-              <li><Link href="/signup" className="text-canvas-muted hover:text-teal text-sm transition-colors">Register</Link></li>
+              <li><Link href="/signup" className="text-canvas-muted hover:text-teal text-sm transition-colors">Register as Buyer or Seller</Link></li>
             </ul>
           </div>
 

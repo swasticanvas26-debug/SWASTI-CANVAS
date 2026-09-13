@@ -114,7 +114,7 @@ export default function SellerChatModal({ sellerId, sellerName, currentUser, onC
                   <div className={clsx(
                     "px-4 py-2.5 rounded-2xl max-w-[85%] text-sm shadow-sm",
                     isMe 
-                      ? "bg-teal text-white rounded-tr-sm" 
+                      ? "bg-teal text-black rounded-tr-sm" 
                       : "bg-white border border-canvas-border text-canvas-dark rounded-tl-sm"
                   )}>
                     {renderMessageContent(msg.message)}

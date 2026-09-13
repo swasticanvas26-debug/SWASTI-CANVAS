@@ -26,7 +26,7 @@ export default async function DashboardPage({
   ] = await Promise.all([
     serviceClient
       .from('orders')
-      .select(`*, artwork:artworks(id, title, image_url, listing_price, seller:users!artworks_seller_id_fkey(name))`)
+      .select(`*, artwork:artworks(id, title, image_url, listing_price, seller:users!artworks_seller_id_fkey(name)), order_reviews(id)`)
       .eq('user_id', user.id)
       .order('purchased_at', { ascending: false }),
     supabase

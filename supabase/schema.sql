@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS users (
   email        TEXT NOT NULL UNIQUE,
   role         user_role NOT NULL DEFAULT 'customer',
   avatar_url   TEXT,
+  address      TEXT,
   created_at   TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -84,6 +85,7 @@ CREATE TABLE IF NOT EXISTS orders (
   transaction_amount NUMERIC(12,2),            -- Amount customer claims to have paid
   payment_status     payment_status NOT NULL DEFAULT 'pending',
   payment_ref        TEXT,
+  shipping_address   TEXT,
   purchased_at       TIMESTAMPTZ DEFAULT NOW(),
   updated_at         TIMESTAMPTZ DEFAULT NOW()
 );
@@ -285,3 +287,38 @@ CREATE POLICY "Users can update own tickets; admins update any" ON support_ticke
 INSERT INTO storage.buckets (id, name, public)
 VALUES ('artwork-images', 'artwork-images', true)
 ON CONFLICT DO NOTHING;
+
+-- ============================================================
+-- ORDER REVIEWS
+-- ============================================================
+CREATE TABLE IF NOT EXISTS order_reviews (
+  id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  order_id        UUID NOT NULL REFERENCES orders(id) ON DELETE CASCADE UNIQUE,
+  user_id         UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  artwork_id      UUID NOT NULL REFERENCES artworks(id) ON DELETE CASCADE,
+  website_rating  INTEGER CHECK (website_rating BETWEEN 1 AND 5),
+  website_comment TEXT,
+  artwork_rating  INTEGER CHECK (artwork_rating BETWEEN 1 AND 5),
+  artwork_comment TEXT,
+  created_at      TIMESTAMPTZ DEFAULT NOW(),
+  updated_at      TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_order_reviews_artwork_id ON order_reviews(artwork_id);
+CREATE INDEX IF NOT EXISTS idx_order_reviews_user_id ON order_reviews(user_id);
+
+DROP TRIGGER IF EXISTS set_reviews_updated_at ON order_reviews;
+CREATE TRIGGER set_reviews_updated_at
+  BEFORE UPDATE ON order_reviews
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+ALTER TABLE order_reviews ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Anyone can view reviews" ON order_reviews
+  FOR SELECT USING (true);
+
+CREATE POLICY "Users can insert their own reviews" ON order_reviews
+  FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update their own reviews" ON order_reviews
+  FOR UPDATE USING (auth.uid() = user_id);

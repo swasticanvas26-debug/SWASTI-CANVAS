@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import {
   TrendingUp, Image as ImageIcon, Clock, Star,
-  Check, X, Edit2, Tag, Loader2, IndianRupee, Wallet, AlertCircle, MessageSquare
+  Check, X, Edit2, Tag, Loader2, IndianRupee, Wallet, AlertCircle, MessageSquare, MapPin
 } from 'lucide-react'
 import type { Artwork, Order, User } from '@/lib/types'
 import ArtworkChatModal from '@/components/shared/ArtworkChatModal'
@@ -21,6 +21,7 @@ interface AdminOverviewProps {
   pendingArtworks: Artwork[]
   activeListings: Artwork[]
   pendingOrders: Order[]
+  allOrders: Order[]
 }
 
 function StatCard({ title, value, icon: Icon, color }: { title: string; value: string | number; icon: any; color: string }) {
@@ -40,7 +41,7 @@ function StatCard({ title, value, icon: Icon, color }: { title: string; value: s
 }
 
 export default function AdminOverview(props: AdminOverviewProps) {
-  const { user, totalSales, activeArtworks, pendingApprovals, sellerRequests, pendingArtworks, activeListings, pendingOrders } = props
+  const { user, totalSales, activeArtworks, pendingApprovals, sellerRequests, pendingArtworks, activeListings, pendingOrders, allOrders } = props
   const router = useRouter()
   const [approvingId, setApprovingId] = useState<string | null>(null)
   const [rejectingId, setRejectingId] = useState<string | null>(null)
@@ -455,6 +456,57 @@ export default function AdminOverview(props: AdminOverviewProps) {
               ))}
             </div>
           </>
+        )}
+      </section>
+
+      {/* Shipping Addresses */}
+      <section id="shipping-addresses" className="bg-white rounded-2xl border border-canvas-border shadow-card overflow-hidden">
+        <div className="px-6 py-4 border-b border-canvas-border">
+          <h2 className="font-semibold text-canvas-dark flex items-center gap-2">
+            <MapPin className="w-4 h-4 text-teal" />
+            Shipping Addresses (Order Fulfillment)
+          </h2>
+        </div>
+        {allOrders.filter(o => o.shipping_address).length === 0 ? (
+          <div className="p-8 text-center text-canvas-muted">No orders with shipping addresses found.</div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Artwork</th>
+                  <th>Customer Name</th>
+                  <th>Status</th>
+                  <th>Shipping Address</th>
+                </tr>
+              </thead>
+              <tbody>
+                {allOrders
+                  .filter((order: any) => order.shipping_address)
+                  .map((order: any) => (
+                  <tr key={order.id}>
+                    <td className="font-mono text-xs text-canvas-muted">{order.id.split('-')[0].toUpperCase()}</td>
+                    <td className="font-medium text-sm">{order.artwork?.title}</td>
+                    <td>
+                      <div className="text-sm font-medium">{order.user?.name}</div>
+                      <div className="text-xs text-canvas-muted">{order.user?.email}</div>
+                    </td>
+                    <td>
+                      {order.payment_status === 'confirmed' ? (
+                        <span className="status-badge badge-listed">✅ Confirmed</span>
+                      ) : order.payment_status === 'pending' ? (
+                        <span className="status-badge badge-pending">⏳ Pending</span>
+                      ) : (
+                        <span className="status-badge badge-rejected">❌ Declined</span>
+                      )}
+                    </td>
+                    <td className="text-sm whitespace-pre-wrap max-w-xs">{order.shipping_address}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </section>
 

@@ -28,7 +28,6 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     .eq('id', id)
     .select()
 
-  require('fs').writeFileSync('api-debug.json', JSON.stringify({ id, updateData, data, error }))
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   if (!data || data.length === 0) return NextResponse.json({ error: 'User not found or ID mismatch' }, { status: 404 })

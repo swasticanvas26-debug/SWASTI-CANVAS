@@ -9,6 +9,7 @@ export interface AppUser {
   email: string
   role: UserRole
   avatar_url?: string
+  address?: string
   created_at: string
   listing_enabled?: boolean
   listing_quota?: number

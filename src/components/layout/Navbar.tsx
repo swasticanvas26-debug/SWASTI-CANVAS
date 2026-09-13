@@ -64,9 +64,10 @@ export default function Navbar({ user, cartCount = 0 }: NavbarProps) {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 shrink-0">
             <img src="/logo.jpg" alt="Logo" className="w-9 h-9 object-cover rounded-full shadow-teal" />
-            <div className="leading-tight">
-              <div className="font-display font-bold text-teal text-lg tracking-tight">SWASTI</div>
-              <div className="font-display font-bold text-teal-light text-[10px] tracking-widest -mt-1">CANVAS</div>
+            <div className="flex flex-col justify-center">
+              <div className="font-display font-bold text-teal text-lg tracking-tight leading-none">SWASTI</div>
+              <div className="font-display font-bold text-teal-light text-[10px] tracking-widest leading-none">CANVAS</div>
+              <div className="font-display font-bold text-teal-light text-[9px] tracking-widest leading-none mt-0.5">Art Work For Everyone</div>
             </div>
           </Link>
 

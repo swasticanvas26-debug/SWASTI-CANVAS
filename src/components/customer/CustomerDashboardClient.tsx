@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import {
   ShoppingBag, LifeBuoy, Star, Plus, Send,
-  CheckCircle, Clock, Loader2, MessageSquare, X
+  CheckCircle, Clock, Loader2, MessageSquare, X, MapPin, User as UserIcon
 } from 'lucide-react'
 import { clsx } from 'clsx'
 import type { AppUser } from '@/lib/auth'
@@ -22,6 +22,7 @@ interface Props {
 
 const TABS = [
   { id: 'orders', label: 'My Orders', icon: ShoppingBag },
+  { id: 'profile', label: 'My Profile', icon: UserIcon },
   { id: 'support', label: 'Help Center', icon: LifeBuoy },
   { id: 'upgrade', label: 'Upgrade Account', icon: Star },
 ]
@@ -33,6 +34,50 @@ export default function CustomerDashboardClient({ user, orders, tickets, activeT
   const [submitting, setSubmitting] = useState(false)
   const [upgrading, setUpgrading] = useState(false)
   const [showTicketForm, setShowTicketForm] = useState(false)
+  const [address, setAddress] = useState(user.address || '')
+  const [savingAddress, setSavingAddress] = useState(false)
+
+  const [reviewOrder, setReviewOrder] = useState<Order | null>(null)
+  const [reviewForm, setReviewForm] = useState({ website_rating: 5, website_comment: '', artwork_rating: 5, artwork_comment: '' })
+  const [submittingReview, setSubmittingReview] = useState(false)
+
+  const handleReviewSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!reviewOrder) return
+    setSubmittingReview(true)
+    try {
+      const res = await fetch('/api/reviews', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          order_id: reviewOrder.id,
+          artwork_id: reviewOrder.artwork_id,
+          ...reviewForm
+        }),
+      })
+      if (!res.ok) throw new Error((await res.json()).error)
+      toast.success('Review submitted successfully!')
+      setReviewOrder(null)
+      router.refresh()
+    } catch (e: any) { toast.error(e.message) }
+    finally { setSubmittingReview(false) }
+  }
+
+  const handleAddressSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setSavingAddress(true)
+    try {
+      const res = await fetch('/api/user/address', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ address }),
+      })
+      if (!res.ok) throw new Error((await res.json()).error)
+      toast.success('Address saved successfully!')
+      router.refresh()
+    } catch (e: any) { toast.error(e.message) }
+    finally { setSavingAddress(false) }
+  }
 
   const handleTicketSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -130,7 +175,16 @@ export default function CustomerDashboardClient({ user, orders, tickets, activeT
                         <td className="text-canvas-muted">{order.artwork?.seller?.name}</td>
                         <td className="font-semibold text-teal">₹{order.amount_paid.toLocaleString('en-IN')}</td>
                         <td>
-                          {order.payment_status === 'confirmed' && <span className="status-badge badge-listed">✅ Confirmed</span>}
+                          {order.payment_status === 'confirmed' && (
+                            <div className="flex items-center gap-2">
+                              <span className="status-badge badge-listed">✅ Confirmed</span>
+                              {!order.order_reviews || order.order_reviews.length === 0 ? (
+                                <button onClick={() => setReviewOrder(order)} className="text-xs font-semibold text-teal hover:underline ml-2">Leave Review</button>
+                              ) : (
+                                <span className="text-xs text-canvas-muted ml-2">Reviewed</span>
+                              )}
+                            </div>
+                          )}
                           {order.payment_status === 'pending' && <span className="status-badge badge-pending">⏳ Pending</span>}
                           {order.payment_status === 'declined' && <span className="status-badge badge-rejected">❌ Declined</span>}
                         </td>
@@ -155,8 +209,17 @@ export default function CustomerDashboardClient({ user, orders, tickets, activeT
                         <div className="font-semibold text-sm">{order.artwork?.title}</div>
                         <div className="text-canvas-muted text-xs">{order.artwork?.seller?.name}</div>
                         <div className="font-bold text-teal mt-1">₹{order.amount_paid.toLocaleString('en-IN')}</div>
-                        <div className="mt-1">
-                          {order.payment_status === 'confirmed' && <span className="status-badge badge-listed">✅ Confirmed</span>}
+                        <div className="mt-1 flex items-center gap-2">
+                          {order.payment_status === 'confirmed' && (
+                            <>
+                              <span className="status-badge badge-listed">✅ Confirmed</span>
+                              {!order.order_reviews || order.order_reviews.length === 0 ? (
+                                <button onClick={() => setReviewOrder(order)} className="text-xs font-semibold text-teal hover:underline">Leave Review</button>
+                              ) : (
+                                <span className="text-xs text-canvas-muted">Reviewed</span>
+                              )}
+                            </>
+                          )}
                           {order.payment_status === 'pending' && <span className="status-badge badge-pending">⏳ Pending</span>}
                           {order.payment_status === 'declined' && <span className="status-badge badge-rejected">❌ Declined</span>}
                         </div>
@@ -168,6 +231,44 @@ export default function CustomerDashboardClient({ user, orders, tickets, activeT
               </div>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Profile Tab */}
+      {tab === 'profile' && (
+        <div className="max-w-xl">
+          <div className="bg-white rounded-2xl border border-canvas-border shadow-card p-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-teal to-teal-light flex items-center justify-center">
+                <MapPin className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h2 className="font-display font-bold text-lg">Shipping Address</h2>
+                <p className="text-canvas-muted text-sm">Save your address for faster checkout</p>
+              </div>
+            </div>
+            <form onSubmit={handleAddressSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-1.5">Full Address</label>
+                <textarea
+                  required
+                  rows={4}
+                  value={address}
+                  onChange={e => setAddress(e.target.value)}
+                  placeholder="Enter your street address, city, state, and PIN code..."
+                  className="input-field resize-none"
+                />
+              </div>
+              <button
+                type="submit"
+                disabled={savingAddress || address === user.address}
+                className="btn-teal w-full py-3 flex items-center justify-center gap-2 font-bold disabled:opacity-50"
+              >
+                {savingAddress ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
+                {savingAddress ? 'Saving…' : 'Save Address'}
+              </button>
+            </form>
+          </div>
         </div>
       )}
 
@@ -244,6 +345,49 @@ export default function CustomerDashboardClient({ user, orders, tickets, activeT
               {upgrading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Star className="w-4 h-4" />}
               {upgrading ? 'Upgrading…' : 'REQUEST SELLER ACCOUNT'}
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Review Modal */}
+      {reviewOrder && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-4">
+          <div className="bg-white rounded-t-2xl sm:rounded-2xl shadow-xl p-6 w-full max-w-lg animate-slide-up max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-display font-bold text-lg">Leave a Review</h3>
+              <button onClick={() => setReviewOrder(null)}><X className="w-5 h-5" /></button>
+            </div>
+            <form onSubmit={handleReviewSubmit} className="space-y-6">
+              
+              <div>
+                <h4 className="font-semibold text-sm mb-2 text-canvas-dark">Artwork Feedback</h4>
+                <div className="flex items-center gap-2 mb-3">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button key={star} type="button" onClick={() => setReviewForm(f => ({ ...f, artwork_rating: star }))}>
+                      <Star className={clsx("w-6 h-6", star <= reviewForm.artwork_rating ? "text-mustard fill-mustard" : "text-canvas-border")} />
+                    </button>
+                  ))}
+                </div>
+                <textarea required rows={3} value={reviewForm.artwork_comment} onChange={e => setReviewForm(f => ({ ...f, artwork_comment: e.target.value }))} placeholder="What did you think of the artwork?" className="input-field resize-none text-sm" />
+              </div>
+
+              <div>
+                <h4 className="font-semibold text-sm mb-2 text-canvas-dark">Website Experience</h4>
+                <div className="flex items-center gap-2 mb-3">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button key={star} type="button" onClick={() => setReviewForm(f => ({ ...f, website_rating: star }))}>
+                      <Star className={clsx("w-6 h-6", star <= reviewForm.website_rating ? "text-mustard fill-mustard" : "text-canvas-border")} />
+                    </button>
+                  ))}
+                </div>
+                <textarea required rows={2} value={reviewForm.website_comment} onChange={e => setReviewForm(f => ({ ...f, website_comment: e.target.value }))} placeholder="How was your experience using Swasti Canvas?" className="input-field resize-none text-sm" />
+              </div>
+
+              <button type="submit" disabled={submittingReview} className="btn-teal w-full py-3 flex items-center justify-center gap-2">
+                {submittingReview ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+                {submittingReview ? 'Submitting…' : 'Submit Review'}
+              </button>
+            </form>
           </div>
         </div>
       )}

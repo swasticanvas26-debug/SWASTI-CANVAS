@@ -6,7 +6,7 @@ import toast from 'react-hot-toast'
 import {
   ShoppingCart, Trash2, Timer, CheckCircle, Loader2, ArrowLeft,
   Smartphone, Building2, Copy, ChevronRight, AlertCircle, CreditCard,
-  ArrowRight, ClipboardCheck
+  ArrowRight, ClipboardCheck, MapPin
 } from 'lucide-react'
 import SafeImage from '@/components/shared/SafeImage'
 import type { CartItem } from '@/lib/types'
@@ -28,7 +28,10 @@ const PAYMENT_DETAILS = {
 }
 // ────────────────────────────────────────────────────────────────────────────
 
-interface Props { items: CartItem[] }
+interface Props { 
+  items: CartItem[]
+  userAddress?: string
+}
 
 function getTimeLeft(addedAt: string): number {
   const expiry = new Date(addedAt).getTime() + 15 * 60 * 1000
@@ -40,11 +43,12 @@ function formatTime(ms: number): string {
   return `${m}:${s.toString().padStart(2, '0')}`
 }
 
-export default function CartClient({ items }: Props) {
+export default function CartClient({ items, userAddress }: Props) {
   const router = useRouter()
   const [timers, setTimers] = useState<Record<string, number>>({})
   const [removing, setRemoving] = useState<string | null>(null)
-  const [step, setStep] = useState<'cart' | 'method' | 'pay' | 'success'>('cart')
+  const [step, setStep] = useState<'cart' | 'address' | 'method' | 'pay' | 'success'>('cart')
+  const [shippingAddress, setShippingAddress] = useState(userAddress || '')
   const [payMethod, setPayMethod] = useState<'upi' | 'bank_transfer' | null>(null)
   const [txId, setTxId] = useState('')
   const [txAmount, setTxAmount] = useState('')
@@ -86,6 +90,7 @@ export default function CartClient({ items }: Props) {
           payment_method: payMethod,
           transaction_id: txId,
           transaction_amount: Number(txAmount),
+          shipping_address: shippingAddress,
         }),
       })
       const data = await res.json()
@@ -153,12 +158,56 @@ export default function CartClient({ items }: Props) {
     )
   }
 
-  // ── Step 2: Choose payment method ───────────────────────────────────────
-  if (step === 'method') {
+  // ── Step 1.5: Confirm Address ──────────────────────────────────────────
+  if (step === 'address') {
     return (
       <div className="animate-fade-in max-w-lg mx-auto">
         <button onClick={() => setStep('cart')} className="flex items-center gap-1.5 text-sm text-canvas-muted hover:text-teal mb-6 transition-colors">
           <ArrowLeft className="w-4 h-4" /> Back to Cart
+        </button>
+        <h1 className="font-display font-bold text-2xl text-canvas-dark mb-1">Shipping Address</h1>
+        <p className="text-canvas-muted text-sm mb-6">Where should we deliver the artwork?</p>
+
+        <div className="bg-white border border-canvas-border rounded-2xl shadow-card p-5 mb-5 space-y-4">
+          <div className="font-semibold text-canvas-dark flex items-center gap-2">
+            <MapPin className="w-4 h-4 text-teal" />
+            Delivery Details
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1.5">
+              Full Address <span className="text-red-500">*</span>
+            </label>
+            <textarea
+              value={shippingAddress}
+              onChange={e => setShippingAddress(e.target.value)}
+              placeholder="Enter your street address, city, state, and PIN code..."
+              className="input-field resize-none"
+              rows={4}
+            />
+          </div>
+          <button
+            onClick={() => {
+              if (!shippingAddress.trim()) {
+                toast.error('Please enter a valid shipping address')
+                return
+              }
+              setStep('method')
+            }}
+            className="btn-teal w-full py-3 flex items-center justify-center gap-2 font-bold"
+          >
+            Continue to Payment <ArrowRight className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  // ── Step 2: Choose payment method ───────────────────────────────────────
+  if (step === 'method') {
+    return (
+      <div className="animate-fade-in max-w-lg mx-auto">
+        <button onClick={() => setStep('address')} className="flex items-center gap-1.5 text-sm text-canvas-muted hover:text-teal mb-6 transition-colors">
+          <ArrowLeft className="w-4 h-4" /> Back to Address
         </button>
         <h1 className="font-display font-bold text-2xl text-canvas-dark mb-1">Choose Payment Method</h1>
         <p className="text-canvas-muted text-sm mb-6">Total: <span className="font-bold text-teal text-base">₹{total.toLocaleString('en-IN')}</span></p>
@@ -387,13 +436,13 @@ export default function CartClient({ items }: Props) {
               </div>
             </div>
             <button
-              onClick={() => setStep('method')}
+              onClick={() => setStep('address')}
               className="btn-teal w-full py-3 flex items-center justify-center gap-2 text-base font-bold"
             >
               <CreditCard className="w-5 h-5" />
-              Proceed to Payment
+              Proceed to Checkout
             </button>
-            <p className="text-xs text-canvas-muted text-center mt-3">🔒 Manual payment with admin verification</p>
+            <p className="text-xs text-canvas-muted text-center mt-3">🔒 Secure Checkout</p>
           </div>
         </div>
       </div>

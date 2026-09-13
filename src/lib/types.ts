@@ -9,6 +9,7 @@ export interface User {
   email: string
   role: UserRole
   avatar_url?: string
+  address?: string
   created_at: string
   listing_enabled?: boolean
   listing_quota?: number
@@ -31,6 +32,7 @@ export interface Artwork {
   // joined
   seller?: User
   offer?: Offer
+  reviews?: OrderReview[]
 }
 
 export interface Offer {
@@ -59,10 +61,12 @@ export interface Order {
   transaction_amount?: number
   payment_status: PaymentStatus
   payment_ref?: string
+  shipping_address?: string
   purchased_at: string
   updated_at: string
   artwork?: Artwork
   user?: User
+  order_reviews?: OrderReview[]
 }
 
 export interface SupportTicket {
@@ -93,4 +97,19 @@ export interface SellerChat {
   message: string
   created_at: string
   sender?: User
+}
+
+export interface OrderReview {
+  id: string
+  order_id: string
+  user_id: string
+  artwork_id: string
+  website_rating?: number
+  website_comment?: string
+  artwork_rating?: number
+  artwork_comment?: string
+  created_at: string
+  updated_at: string
+  user?: User
+  artwork?: Artwork
 }
