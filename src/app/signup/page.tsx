@@ -100,7 +100,7 @@ export default function SignupPage() {
                 <button
                   type="button"
                   onClick={() => setRole('customer')}
-                  className={`flex flex-col items-center gap-1.5 p-4 rounded-xl border-2 transition-all ${role === 'customer' ? 'border-peach bg-peach text-white shadow-card' : 'border-canvas-border text-canvas-muted hover:border-peach hover:bg-peach-pale hover:text-peach'}`}
+                  className={`flex flex-col items-center gap-1.5 p-4 rounded-xl border-2 transition-all ${role === 'customer' ? 'border-[#F4A47A] bg-[#F4A47A] text-white shadow-card' : 'border-canvas-border text-canvas-muted hover:border-[#F4A47A] hover:bg-[#FEF3EC] hover:text-[#F4A47A]'}`}
                 >
                   <UserCircle className="w-6 h-6" />
                   <span className="text-sm font-semibold">Buyer</span>
@@ -109,7 +109,7 @@ export default function SignupPage() {
                 <button
                   type="button"
                   onClick={() => setRole('seller')}
-                  className={`flex flex-col items-center gap-1.5 p-4 rounded-xl border-2 transition-all ${role === 'seller' ? 'border-peach bg-peach text-white shadow-card' : 'border-canvas-border text-canvas-muted hover:border-peach hover:bg-peach-pale hover:text-peach'}`}
+                  className={`flex flex-col items-center gap-1.5 p-4 rounded-xl border-2 transition-all ${role === 'seller' ? 'border-[#F4A47A] bg-[#F4A47A] text-white shadow-card' : 'border-canvas-border text-canvas-muted hover:border-[#F4A47A] hover:bg-[#FEF3EC] hover:text-[#F4A47A]'}`}
                 >
                   <Brush className="w-6 h-6" />
                   <span className="text-sm font-semibold">Seller / Artist</span>
@@ -120,7 +120,7 @@ export default function SignupPage() {
               <form onSubmit={handleSignup} className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-canvas-dark mb-1.5">Full Name</label>
-                  <input type="text" required value={name} onChange={e => setName(e.target.value)} placeholder="Anjali Sharma" className="input-field" />
+                  <input type="text" required value={name} onChange={e => setName(e.target.value)} placeholder="Full Name" className="input-field" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-canvas-dark mb-1.5">Email</label>
