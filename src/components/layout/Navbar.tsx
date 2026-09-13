@@ -22,6 +22,7 @@ const CATEGORIES = ['Abstract', 'Landscape', 'Portrait', 'Floral', 'Geometric', 
 const NAV_LINKS = [
   { label: 'Home', href: '/' },
   { label: 'Artworks', href: '/artworks' },
+  { label: 'Reviews', href: '/reviews' },
 ]
 
 export default function Navbar({ user, cartCount = 0 }: NavbarProps) {

@@ -100,20 +100,20 @@ export default function SignupPage() {
                 <button
                   type="button"
                   onClick={() => setRole('customer')}
-                  className={`flex flex-col items-center gap-1.5 p-4 rounded-xl border-2 transition-all ${role === 'customer' ? 'border-teal bg-teal-pale text-teal' : 'border-canvas-border text-canvas-muted hover:border-teal'}`}
+                  className={`flex flex-col items-center gap-1.5 p-4 rounded-xl border-2 transition-all ${role === 'customer' ? 'border-peach bg-peach text-white shadow-card' : 'border-canvas-border text-canvas-muted hover:border-peach hover:bg-peach-pale hover:text-peach'}`}
                 >
                   <UserCircle className="w-6 h-6" />
                   <span className="text-sm font-semibold">Buyer</span>
-                  <span className="text-xs opacity-70">Browse & Collect</span>
+                  <span className="text-xs opacity-90">Browse & Collect</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => setRole('seller')}
-                  className={`flex flex-col items-center gap-1.5 p-4 rounded-xl border-2 transition-all ${role === 'seller' ? 'border-teal bg-teal-pale text-teal' : 'border-canvas-border text-canvas-muted hover:border-teal'}`}
+                  className={`flex flex-col items-center gap-1.5 p-4 rounded-xl border-2 transition-all ${role === 'seller' ? 'border-peach bg-peach text-white shadow-card' : 'border-canvas-border text-canvas-muted hover:border-peach hover:bg-peach-pale hover:text-peach'}`}
                 >
                   <Brush className="w-6 h-6" />
                   <span className="text-sm font-semibold">Seller / Artist</span>
-                  <span className="text-xs opacity-70">Sell Your Art</span>
+                  <span className="text-xs opacity-90">Sell Your Art</span>
                 </button>
               </div>
 
