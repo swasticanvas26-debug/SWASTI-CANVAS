@@ -70,9 +70,9 @@ export default function LoginForm() {
             <div>
               <div className="flex justify-between items-center mb-1.5">
                 <label className="block text-sm font-medium text-canvas-dark">Password</label>
-                <Link href="/forgot-password" className="text-xs text-teal font-semibold hover:underline">
+                {/* <Link href="/forgot-password" className="text-xs text-teal font-semibold hover:underline">
                   Forgot Password?
-                </Link>
+                </Link> */}
               </div>
               <div className="relative">
                 <input
