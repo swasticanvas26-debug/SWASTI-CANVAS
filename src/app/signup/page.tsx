@@ -12,7 +12,6 @@ export default function SignupPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [role, setRole] = useState<'customer' | 'seller'>('customer')
-  const [otp, setOtp] = useState('')
   const [showPw, setShowPw] = useState(false)
   const [loading, setLoading] = useState(false)
   const [step, setStep] = useState<1 | 2>(1)
@@ -34,7 +33,7 @@ export default function SignupPage() {
         }
       })
       if (error) throw new Error(error.message)
-      toast.success('OTP sent to your email!')
+      toast.success('Confirmation link sent to your email!')
       setStep(2)
     } catch (err: any) {
       toast.error(err.message ?? 'Registration failed')
@@ -43,35 +42,7 @@ export default function SignupPage() {
     }
   }
 
-  const handleVerifyOtp = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    const supabase = createSupabaseBrowserClient()
-    try {
-      const { error: verifyError } = await supabase.auth.verifyOtp({
-        email,
-        token: otp,
-        type: 'signup',
-      })
-      if (verifyError) throw new Error(verifyError.message)
 
-      // Insert profile data by calling backend endpoint
-      const res = await fetch('/api/auth/complete-signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error ?? 'Profile setup failed')
-
-      toast.success('Account created! Welcome to Swasti Canvas.')
-      router.push('/')
-      router.refresh()
-    } catch (err: any) {
-      toast.error(err.message ?? 'OTP verification failed')
-    } finally {
-      setLoading(false)
-    }
-  }
 
   return (
     <div className="min-h-screen bg-canvas-bg flex items-center justify-center relative overflow-hidden py-10">
@@ -90,7 +61,7 @@ export default function SignupPage() {
             {step === 1 ? 'Create Account' : 'Verify Email'}
           </h2>
           <p className="text-canvas-muted text-sm text-center mb-6">
-            {step === 1 ? 'Join thousands of art lovers' : 'Enter the 6-digit OTP sent to your email'}
+            {step === 1 ? 'Join thousands of art lovers' : 'We just sent a secure link to your email'}
           </p>
 
           {step === 1 ? (
@@ -146,30 +117,21 @@ export default function SignupPage() {
 
                 <button type="submit" disabled={loading} className="btn-teal w-full py-3 mt-1 flex items-center justify-center gap-2 disabled:opacity-60">
                   {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
-                  {loading ? 'Sending OTP…' : 'Create Account'}
+                  {loading ? 'Sending link…' : 'Create Account'}
                 </button>
               </form>
             </>
           ) : (
-            <form onSubmit={handleVerifyOtp} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-canvas-dark mb-1.5">OTP</label>
-                <input
-                  type="text" required
-                  value={otp}
-                  onChange={e => setOtp(e.target.value)}
-                  placeholder="Enter 6-digit OTP"
-                  className="input-field tracking-widest"
-                />
+            <div className="text-center space-y-4">
+              <div className="bg-teal-pale text-teal p-4 rounded-xl border border-teal/20 text-sm">
+                A confirmation link has been sent to <span className="font-semibold">{email}</span>. 
+                Please check your inbox and click the link to activate your account.
               </div>
-              <button type="submit" disabled={loading} className="btn-teal w-full py-3 mt-2 flex items-center justify-center gap-2 disabled:opacity-60">
-                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
-                {loading ? 'Verifying…' : 'Verify OTP'}
-              </button>
+              <p className="text-xs text-canvas-muted">You can close this window after clicking the link.</p>
               <button type="button" onClick={() => setStep(1)} className="w-full text-center text-sm text-canvas-muted mt-3 hover:text-teal">
                 Back to Signup
               </button>
-            </form>
+            </div>
           )}
 
           <p className="text-center text-sm text-canvas-muted mt-5">
