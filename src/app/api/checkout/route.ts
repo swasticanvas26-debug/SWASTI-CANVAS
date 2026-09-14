@@ -26,7 +26,7 @@ export async function POST(request: Request) {
   // Get user's cart items
   const { data: cartItems } = await supabase
     .from('cart')
-    .select(`*, artwork:artworks(id, title, listing_price, seller_requested_price, status, offer:offers(*))`)
+    .select(`*, artwork:artworks(id, title, listing_price, seller_requested_price, status)`)
     .eq('user_id', user.id)
 
   if (!cartItems || cartItems.length === 0) {

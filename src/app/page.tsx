@@ -17,8 +17,7 @@ async function getFeaturedArtworks(): Promise<Artwork[]> {
     .from('artworks')
     .select(`
       *,
-      seller:users!artworks_seller_id_fkey(id, name, email, role),
-      offer:offers(*)
+      seller:users!artworks_seller_id_fkey(id, name, email, role)
     `)
     .eq('status', 'listed')
     .order('created_at', { ascending: false })

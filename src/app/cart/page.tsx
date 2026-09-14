@@ -15,8 +15,7 @@ export default async function CartPage() {
       *,
       artwork:artworks(
         *,
-        seller:users!artworks_seller_id_fkey(id, name),
-        offer:offers(*)
+        seller:users!artworks_seller_id_fkey(id, name)
       )
     `)
     .eq('user_id', user.id)

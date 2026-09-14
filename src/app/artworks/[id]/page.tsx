@@ -25,7 +25,6 @@ export default async function ArtworkDetailPage({ params }: Props) {
     .select(`
       *,
       seller:users!artworks_seller_id_fkey(id, name, email, role),
-      offer:offers(*),
       reviews:order_reviews(id, artwork_rating, artwork_comment, created_at, user:users(name))
     `)
     .eq('id', id)

@@ -12,7 +12,7 @@ export default async function SellerPage() {
 
   const { data: artworks } = await supabase
     .from('artworks')
-    .select(`*, offer:offers(*)`)
+    .select(`*`)
     .eq('seller_id', user.id)
     .order('created_at', { ascending: false })
 
