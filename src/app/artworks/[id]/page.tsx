@@ -73,7 +73,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
 
           {/* Details */}
           <div className="flex flex-col">
-            <div className="flex gap-2 mb-3">
+            <div className="flex gap-2 mb-3 flex-wrap">
               <span className="inline-block bg-teal-pale text-teal text-xs font-bold px-3 py-1 rounded-full w-fit">
                 {artwork.category}
               </span>
@@ -82,11 +82,20 @@ export default async function ArtworkDetailPage({ params }: Props) {
                   {artwork.quantity} in stock
                 </span>
               )}
+              {artwork.artwork_type && (
+                <span className={`inline-block text-xs font-bold px-3 py-1 rounded-full w-fit ${
+                  artwork.artwork_type === 'original'
+                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                    : 'bg-purple-50 text-purple-700 border border-purple-200'
+                }`}>
+                  {artwork.artwork_type === 'original' ? '🎨 Original' : '🖌️ Repainted'}
+                </span>
+              )}
             </div>
             <h1 className="font-display font-bold text-3xl text-canvas-dark mb-1">{artwork.title}</h1>
             <div className="flex items-center gap-2 mb-4">
               <User2 className="w-4 h-4 text-canvas-muted" />
-              <span className="text-canvas-muted text-sm">{artwork.seller?.name}</span>
+              <span className="text-canvas-muted text-sm">{artwork.seller?.name ?? 'Swasti Canvas'}</span>
             </div>
 
             {artwork.description && (

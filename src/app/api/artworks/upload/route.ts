@@ -25,7 +25,7 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json()
-  const { title, description, category, image_url, seller_requested_price, listing_price, quantity } = body
+  const { title, description, category, image_url, seller_requested_price, listing_price, quantity, artwork_type } = body
 
   if (!title || !image_url || !seller_requested_price || !category) {
     return NextResponse.json({ error: 'title, image_url, category, seller_requested_price required' }, { status: 400 })
@@ -35,7 +35,10 @@ export async function POST(request: Request) {
                      // || image_url.startsWith('https://photos.app.goo.gl/') 
                      // || image_url.startsWith('https://photos.google.com/')
 
-  if (!isValidUrl) {
+  // Admin can use Supabase Storage URLs too
+  const isAdminStorageUrl = profile?.role === 'admin' && !image_url.startsWith('https://drive.google.com/')
+
+  if (!isValidUrl && !isAdminStorageUrl) {
     return NextResponse.json({ error: 'Only Google Drive links are allowed for images right now.' }, { status: 400 })
   }
 
@@ -51,6 +54,7 @@ export async function POST(request: Request) {
     listing_price: isAdmin ? (listing_price ?? seller_requested_price) : null,
     quantity: quantity ? parseInt(quantity) : 1,
     status: isAdmin ? 'listed' : 'pending_approval',
+    artwork_type: artwork_type ?? 'original',
   }).select().single()
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })

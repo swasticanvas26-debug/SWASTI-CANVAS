@@ -67,12 +67,24 @@ export default function ArtworkCard({ artwork, showAddToCart = true, onAddToCart
             {offer!.discount_percentage}% OFF
           </div>
         )}
+        {/* Artwork type badge */}
+        {artwork.artwork_type && (
+          <div className="absolute bottom-2.5 left-2.5">
+            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+              artwork.artwork_type === 'original'
+                ? 'bg-emerald-100/90 text-emerald-700'
+                : 'bg-purple-100/90 text-purple-700'
+            }`}>
+              {artwork.artwork_type === 'original' ? '🎨 Original' : '🖌️ Repainted'}
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Info */}
       <div className="p-3.5">
         <h3 className="font-semibold text-canvas-dark text-sm line-clamp-1 mb-0.5">{artwork.title}</h3>
-        <p className="text-canvas-muted text-xs mb-2">{artwork.seller?.name ?? 'Unknown Artist'}</p>
+        <p className="text-canvas-muted text-xs mb-2">{artwork.seller?.name ?? 'Swasti Canvas'}</p>
 
         {/* Price row */}
         <div className="flex items-end justify-between gap-2">

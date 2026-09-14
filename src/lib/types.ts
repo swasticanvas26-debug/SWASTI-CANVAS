@@ -16,6 +16,8 @@ export interface User {
   permission_requested?: boolean
 }
 
+export type ArtworkType = 'original' | 'repainted'
+
 export interface Artwork {
   id: string
   title: string
@@ -27,6 +29,7 @@ export interface Artwork {
   listing_price?: number
   quantity: number
   status: ArtworkStatus
+  artwork_type?: ArtworkType
   created_at: string
   updated_at: string
   // joined

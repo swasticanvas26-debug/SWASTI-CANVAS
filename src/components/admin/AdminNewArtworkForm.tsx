@@ -2,9 +2,8 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Upload, Loader2, Image as ImageIcon, Search, X } from 'lucide-react'
+import { Upload, Loader2, X } from 'lucide-react'
 import toast from 'react-hot-toast'
-import Image from 'next/image'
 import SafeImage from '@/components/shared/SafeImage'
 
 const CATEGORIES = ['Abstract', 'Landscape', 'Portrait', 'Floral', 'Geometric', 'Mixed Media']
@@ -19,34 +18,10 @@ export default function AdminNewArtworkForm() {
     seller_requested_price: '',
     listing_price: '',
     quantity: '1',
+    artwork_type: 'original',
   })
   const [loading, setLoading] = useState(false)
   const [preview, setPreview] = useState('')
-  const [showGallery, setShowGallery] = useState(false)
-  const [galleryImages, setGalleryImages] = useState<{name: string, url: string}[]>([])
-  const [galleryLoading, setGalleryLoading] = useState(false)
-
-  const openGallery = async () => {
-    setShowGallery(true)
-    if (galleryImages.length > 0) return
-    setGalleryLoading(true)
-    try {
-      const res = await fetch('/api/storage/list')
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error)
-      setGalleryImages(data.files || [])
-    } catch (e: any) {
-      toast.error('Failed to load storage gallery')
-    } finally {
-      setGalleryLoading(false)
-    }
-  }
-
-  const selectImage = (url: string) => {
-    setForm(f => ({ ...f, image_url: url }))
-    setPreview(url)
-    setShowGallery(false)
-  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -88,25 +63,26 @@ export default function AdminNewArtworkForm() {
 
           <div>
             <label className="block text-sm font-medium mb-1.5">Image URL</label>
-            <div className="flex gap-2">
-              <input
-                type="url"
-                required
-                value={form.image_url}
-                onChange={e => { setForm(f => ({ ...f, image_url: e.target.value })); setPreview(e.target.value) }}
-                placeholder="https://… (Supabase Storage URL or public URL)"
-                className="input-field flex-1"
-              />
-              <button
-                type="button"
-                onClick={openGallery}
-                className="btn-outline flex items-center justify-center px-4"
-                title="Browse Storage"
-              >
-                <Search className="w-4 h-4" />
-              </button>
-            </div>
-            <p className="text-xs text-canvas-muted mt-1">Paste a public URL or browse your Supabase storage.</p>
+            <input
+              type="url"
+              required
+              value={form.image_url}
+              onChange={e => {
+                const val = e.target.value
+                setForm(f => ({ ...f, image_url: val }))
+                if (val === '' || val.startsWith('https://drive.google.com/')) {
+                  setPreview(val)
+                } else {
+                  setPreview('')
+                }
+              }}
+              placeholder="https://drive.google.com/..."
+              className="input-field"
+            />
+            {form.image_url && !form.image_url.startsWith('https://drive.google.com/') && (
+              <p className="text-xs text-red-500 mt-1">Please provide a valid Google Drive link.</p>
+            )}
+            <p className="text-xs text-canvas-muted mt-1">Paste a Google Drive shared link.</p>
           </div>
 
           <div>
@@ -119,6 +95,15 @@ export default function AdminNewArtworkForm() {
             <select value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))} className="input-field">
               {CATEGORIES.map(c => <option key={c}>{c}</option>)}
             </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1.5">Artwork Type</label>
+            <select value={form.artwork_type} onChange={e => setForm(f => ({ ...f, artwork_type: e.target.value }))} className="input-field">
+              <option value="original">🎨 Original</option>
+              <option value="repainted">🖌️ Repainted</option>
+            </select>
+            <p className="text-xs text-canvas-muted mt-1">Is this an original creation or a repainted/reproduction artwork?</p>
           </div>
 
           <div>
@@ -148,49 +133,6 @@ export default function AdminNewArtworkForm() {
         </form>
       </div>
 
-      {/* Gallery Modal */}
-      {showGallery && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-4xl max-h-[80vh] flex flex-col animate-slide-up">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-display font-bold text-xl">Select from Storage</h3>
-              <button onClick={() => setShowGallery(false)} className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors">
-                <X className="w-5 h-5 text-canvas-muted" />
-              </button>
-            </div>
-            
-            <div className="flex-1 overflow-y-auto min-h-0 -mx-6 px-6">
-              {galleryLoading ? (
-                <div className="flex flex-col items-center justify-center h-48 text-canvas-muted">
-                  <Loader2 className="w-8 h-8 animate-spin mb-4" />
-                  <p>Loading gallery...</p>
-                </div>
-              ) : galleryImages.length === 0 ? (
-                <div className="text-center py-12 text-canvas-muted">
-                  <ImageIcon className="w-12 h-12 mx-auto mb-3 opacity-20" />
-                  <p>No images found in the storage bucket.</p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 pb-4">
-                  {galleryImages.map((img) => (
-                    <button
-                      key={img.name}
-                      type="button"
-                      onClick={() => selectImage(img.url)}
-                      className="group relative aspect-square rounded-xl overflow-hidden bg-gray-100 border-2 border-transparent hover:border-teal transition-all focus:outline-none focus:ring-2 focus:ring-teal focus:ring-offset-2"
-                    >
-                      <SafeImage src={img.url} alt={img.name} fill className="object-cover" />
-                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                        <span className="opacity-0 group-hover:opacity-100 bg-teal text-white text-xs font-medium px-2 py-1 rounded shadow-sm transition-opacity">Select</span>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

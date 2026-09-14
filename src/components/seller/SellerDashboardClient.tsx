@@ -32,7 +32,7 @@ const STATUS_COLORS: Record<string, string> = {
 export default function SellerDashboardClient({ user, artworks, stats }: Props) {
   const router = useRouter()
   const [showUpload, setShowUpload] = useState(false)
-  const [form, setForm] = useState({ title: '', description: '', category: 'Abstract', image_url: '', seller_requested_price: '', quantity: '1' })
+  const [form, setForm] = useState({ title: '', description: '', category: 'Abstract', image_url: '', seller_requested_price: '', quantity: '1', artwork_type: 'original' })
   const [loading, setLoading] = useState(false)
   const [preview, setPreview] = useState('')
   const [chatArtwork, setChatArtwork] = useState<Artwork | null>(null)
@@ -75,7 +75,7 @@ export default function SellerDashboardClient({ user, artworks, stats }: Props) 
       if (!res.ok) throw new Error(data.error)
       toast.success('Artwork submitted for review!')
       setShowUpload(false)
-      setForm({ title: '', description: '', category: 'Abstract', image_url: '', seller_requested_price: '', quantity: '1' })
+      setForm({ title: '', description: '', category: 'Abstract', image_url: '', seller_requested_price: '', quantity: '1', artwork_type: 'original' })
       setPreview('')
       router.refresh()
     } catch (e: any) { toast.error(e.message) }
@@ -274,6 +274,14 @@ export default function SellerDashboardClient({ user, artworks, stats }: Props) 
                 <select value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))} className="input-field">
                   {CATEGORIES.map(c => <option key={c}>{c}</option>)}
                 </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Artwork Type</label>
+                <select value={form.artwork_type} onChange={e => setForm(f => ({ ...f, artwork_type: e.target.value }))} className="input-field">
+                  <option value="original">🎨 Original</option>
+                  <option value="repainted">🖌️ Repainted</option>
+                </select>
+                <p className="text-xs text-canvas-muted mt-1">Is this an original creation or a repainted/reproduction artwork?</p>
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Description (optional)</label>
