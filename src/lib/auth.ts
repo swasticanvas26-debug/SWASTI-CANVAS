@@ -22,19 +22,24 @@ export async function getSession() {
   return session
 }
 
-export async function getAppUser(): Promise<AppUser | null> {
+import { cache } from 'react'
+
+export const getAppUser = cache(async (): Promise<AppUser | null> => {
   const supabase = await createSupabaseServerClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return null
+  
+  // getSession is much faster as it relies on cookies instead of a full network request
+  // Since proxy.ts already calls getUser() to refresh the session, the cookie is guaranteed fresh
+  const { data: { session } } = await supabase.auth.getSession()
+  if (!session?.user) return null
 
   const { data } = await supabase
     .from('users')
     .select('*')
-    .eq('id', user.id)
+    .eq('id', session.user.id)
     .single()
 
   return data as AppUser | null
-}
+})
 
 export async function requireRole(allowedRoles: UserRole[]) {
   const user = await getAppUser()

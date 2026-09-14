@@ -74,8 +74,8 @@ export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname
 
   // Public routes
-  const publicRoutes = ['/', '/login', '/signup', '/artworks']
-  const isPublic = publicRoutes.some(r => pathname === r || pathname.startsWith('/artworks/'))
+  const publicRoutes = ['/', '/login', '/signup', '/artworks', '/faq', '/terms', '/privacy-policy', '/reviews', '/about']
+  const isPublic = publicRoutes.some(r => pathname === r || (r !== '/' && pathname.startsWith(`${r}/`)))
   const isApi = pathname.startsWith('/api/')
 
   if (!user && !isPublic && !isApi) {
@@ -86,28 +86,8 @@ export async function proxy(request: NextRequest) {
   }
 
   if (user) {
-    // Fetch role
-    const { data: profile } = await supabase
-      .from('users')
-      .select('role')
-      .eq('id', user.id)
-      .single()
-
-    const role = profile?.role
-
-    // Admin-only routes
-    if (pathname.startsWith('/admin') && role !== 'admin') {
-      return NextResponse.redirect(new URL('/', request.url))
-    }
-
-    // Seller-only routes
-    if (pathname.startsWith('/seller') && !['admin', 'seller'].includes(role)) {
-      return NextResponse.redirect(new URL('/', request.url))
-    }
-
     // Redirect logged-in users away from auth pages
     if (pathname === '/login' || pathname === '/signup') {
-      if (role === 'admin') return NextResponse.redirect(new URL('/admin', request.url))
       return NextResponse.redirect(new URL('/', request.url))
     }
   }

@@ -14,10 +14,11 @@ export default function Footer() {
           {/* Brand Info */}
           <div className="md:col-span-1 space-y-4">
             <Link href="/" className="flex items-center gap-2 inline-flex">
-              <img src="/logo.jpg" alt="Logo" className="w-10 h-10 object-cover rounded-full shadow-teal" />
-              <div className="leading-tight">
-                <div className="font-display font-bold text-teal text-xl tracking-tight">SWASTI</div>
-                <div className="font-display font-bold text-teal-light text-xs tracking-widest -mt-1">CANVAS</div>
+              <img src="/logo.jpg" alt="Logo" className="w-16 h-16 object-cover rounded-full shadow-teal" />
+              <div className="flex flex-col justify-center">
+                <div className="font-display font-bold text-teal text-xl tracking-tight leading-none">SWASTI</div>
+                <div className="font-display font-bold text-teal-light text-[11px] tracking-widest leading-none mt-1">CANVAS</div>
+                <div className="font-display font-bold text-teal-light text-[10px] tracking-widest leading-none mt-1">Art Work For Everyone</div>
               </div>
             </Link>
             <p className="text-canvas-muted text-sm leading-relaxed pr-4">
@@ -30,6 +31,7 @@ export default function Footer() {
             <h3 className="font-display font-bold text-canvas-dark mb-4">Quick Links</h3>
             <ul className="space-y-2">
               <li><Link href="/" className="text-canvas-muted hover:text-teal text-sm transition-colors">Home</Link></li>
+              <li><Link href="/about" className="text-canvas-muted hover:text-teal text-sm transition-colors">About Us</Link></li>
               <li><Link href="/artworks" className="text-canvas-muted hover:text-teal text-sm transition-colors">Browse Artworks</Link></li>
               <li><Link href="/login" className="text-canvas-muted hover:text-teal text-sm transition-colors">Sign In</Link></li>
               <li><Link href="/signup" className="text-canvas-muted hover:text-teal text-sm transition-colors">Register as Buyer or Seller</Link></li>
