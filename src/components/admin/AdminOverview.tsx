@@ -52,6 +52,9 @@ export default function AdminOverview(props: AdminOverviewProps) {
   const [offerDiscount, setOfferDiscount] = useState('')
   const [offerUntil, setOfferUntil] = useState('')
   const [processingOrderId, setProcessingOrderId] = useState<string | null>(null)
+  const [editPriceModal, setEditPriceModal] = useState<{ artwork: Artwork } | null>(null)
+  const [editPriceInput, setEditPriceInput] = useState('')
+  const [editingPriceId, setEditingPriceId] = useState<string | null>(null)
 
   const handleOrderAction = async (orderId: string, action: 'confirm' | 'decline') => {
     setProcessingOrderId(orderId)
@@ -101,6 +104,25 @@ export default function AdminOverview(props: AdminOverviewProps) {
       router.refresh()
     } catch (e: any) { toast.error(e.message) }
     finally { setRejectingId(null) }
+  }
+
+  const confirmEditPrice = async () => {
+    if (!editPriceModal) return
+    const price = parseFloat(editPriceInput)
+    if (!price || price <= 0) { toast.error('Enter a valid listing price'); return }
+    setEditingPriceId(editPriceModal.artwork.id)
+    try {
+      const res = await fetch(`/api/artworks/${editPriceModal.artwork.id}/approve`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ listing_price: price }),
+      })
+      if (!res.ok) throw new Error((await res.json()).error)
+      toast.success('Listing price updated!')
+      setEditPriceModal(null)
+      router.refresh()
+    } catch (e: any) { toast.error(e.message) }
+    finally { setEditingPriceId(null) }
   }
 
   const handleAddOffer = async () => {
@@ -425,6 +447,7 @@ export default function AdminOverview(props: AdminOverviewProps) {
                       </td> */}
                       <td>
                         <div className="flex gap-2">
+                          <button onClick={() => { setEditPriceModal({ artwork }); setEditPriceInput(String(artwork.listing_price || '')) }} className="text-teal text-xs font-semibold hover:underline">Edit Price</button>
                           <button onClick={() => handleRemoveListing(artwork.id)} className="text-red-500 text-xs font-semibold hover:underline">Remove</button>
                         </div>
                       </td>
@@ -450,6 +473,7 @@ export default function AdminOverview(props: AdminOverviewProps) {
                   </div>
                   <div className="flex gap-2 text-xs">
                     {/* <button onClick={() => { setOfferModal({ artwork }); setOfferDiscount(''); setOfferUntil('') }} className="text-teal font-semibold">[{artwork.offer ? 'Edit' : 'Add'} Offer]</button> */}
+                    <button onClick={() => { setEditPriceModal({ artwork }); setEditPriceInput(String(artwork.listing_price || '')) }} className="text-teal font-semibold">[Edit Price]</button>
                     <button onClick={() => handleRemoveListing(artwork.id)} className="text-red-500 font-semibold">[Remove]</button>
                   </div>
                 </div>
@@ -535,6 +559,36 @@ export default function AdminOverview(props: AdminOverviewProps) {
               <button onClick={confirmApprove} disabled={!!approvingId} className="btn-teal flex-1 flex items-center justify-center gap-2">
                 {approvingId ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
                 Approve & List
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Price Modal */}
+      {editPriceModal && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md animate-slide-up">
+            <h3 className="font-display font-bold text-lg mb-1">Edit Listing Price</h3>
+            <p className="text-canvas-muted text-sm mb-4">Update the public listing price for <strong>{editPriceModal.artwork.title}</strong>.</p>
+            <div className="mb-4">
+              <div className="relative">
+                <IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-canvas-muted" />
+                <input
+                  type="number"
+                  value={editPriceInput}
+                  onChange={e => setEditPriceInput(e.target.value)}
+                  className="input-field"
+                  style={{ paddingLeft: '2.25rem' }}
+                  placeholder="Set new listing price"
+                />
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <button onClick={() => setEditPriceModal(null)} className="btn-outline flex-1">Cancel</button>
+              <button onClick={confirmEditPrice} disabled={!!editingPriceId} className="btn-teal flex-1 flex items-center justify-center gap-2">
+                {editingPriceId ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
+                Save Changes
               </button>
             </div>
           </div>

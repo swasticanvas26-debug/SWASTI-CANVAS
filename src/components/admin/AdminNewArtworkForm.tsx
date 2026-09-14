@@ -57,7 +57,7 @@ export default function AdminNewArtworkForm() {
           {/* Image preview */}
           {preview && (
             <div className="relative aspect-video rounded-xl overflow-hidden bg-gray-100 mb-2">
-              <img src={preview} alt="Preview" className="w-full h-full object-cover" />
+              <SafeImage src={preview} alt="Preview" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" />
             </div>
           )}
 
