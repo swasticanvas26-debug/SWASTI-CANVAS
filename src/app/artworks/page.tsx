@@ -47,7 +47,7 @@ async function getArtworks(params: SearchParams): Promise<Artwork[]> {
   }))
 }
 
-const CATEGORIES = ['Abstract', 'Landscape', 'Portrait', 'Floral', 'Geometric', 'Mixed Media']
+const CATEGORIES = ['Landscape', 'Abstract', 'Animal & Birds', 'Religious', 'Figurative', 'Indian', 'Other painting', 'Reprints or printed']
 
 export default async function ArtworksPage({
   searchParams,

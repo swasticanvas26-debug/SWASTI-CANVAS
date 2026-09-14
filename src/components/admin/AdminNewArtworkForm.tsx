@@ -6,14 +6,14 @@ import { Upload, Loader2, X } from 'lucide-react'
 import toast from 'react-hot-toast'
 import SafeImage from '@/components/shared/SafeImage'
 
-const CATEGORIES = ['Abstract', 'Landscape', 'Portrait', 'Floral', 'Geometric', 'Mixed Media']
+const CATEGORIES = ['Landscape', 'Abstract', 'Animal & Birds', 'Religious', 'Figurative', 'Indian', 'Other painting', 'Reprints or printed']
 
 export default function AdminNewArtworkForm() {
   const router = useRouter()
   const [form, setForm] = useState({
     title: '',
     description: '',
-    category: 'Abstract',
+    category: 'Landscape',
     image_url: '',
     seller_requested_price: '',
     listing_price: '',

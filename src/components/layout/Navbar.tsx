@@ -17,7 +17,7 @@ interface NavbarProps {
   cartCount?: number
 }
 
-const CATEGORIES = ['Abstract', 'Landscape', 'Portrait', 'Floral', 'Geometric', 'Mixed Media']
+const CATEGORIES = ['Landscape', 'Abstract', 'Animal & Birds', 'Religious', 'Figurative', 'Indian', 'Other painting', 'Reprints or printed']
 
 const NAV_LINKS = [
   { label: 'Home', href: '/' },

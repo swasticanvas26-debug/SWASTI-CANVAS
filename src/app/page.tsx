@@ -77,8 +77,8 @@ export default async function HomePage() {
         <section className="max-w-7xl mx-auto px-3 sm:px-6 py-2 pb-10">
           <div className="section-glass px-4 sm:px-6 py-6">
             <h2 className="font-display font-bold text-xl text-canvas-dark mb-4">Browse by Category</h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
-              {['Abstract', 'Landscape', 'Portrait', 'Floral', 'Geometric', 'Mixed Media'].map((cat, i) => {
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+              {['Landscape', 'Abstract', 'Animal & Birds', 'Religious', 'Figurative', 'Indian', 'Other painting', 'Reprints or printed'].map((cat, i) => {
                 const colors = [
                   'from-emerald-200 to-teal-100 text-teal-950',
                   'from-blue-200 to-cyan-100 text-blue-950',
@@ -86,6 +86,8 @@ export default async function HomePage() {
                   'from-rose-200 to-pink-100 text-rose-950',
                   'from-yellow-200 to-orange-100 text-yellow-950',
                   'from-purple-200 to-indigo-100 text-purple-950',
+                  'from-pink-200 to-rose-100 text-pink-950',
+                  'from-slate-200 to-gray-100 text-slate-950',
                 ]
                 return (
                   <a

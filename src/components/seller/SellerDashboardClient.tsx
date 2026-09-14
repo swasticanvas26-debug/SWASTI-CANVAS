@@ -14,7 +14,7 @@ import ArtworkChatModal from '@/components/shared/ArtworkChatModal'
 import SellerChatModal from '@/components/shared/SellerChatModal'
 import SafeImage from '@/components/shared/SafeImage'
 
-const CATEGORIES = ['Abstract', 'Landscape', 'Portrait', 'Floral', 'Geometric', 'Mixed Media']
+const CATEGORIES = ['Landscape', 'Abstract', 'Animal & Birds', 'Religious', 'Figurative', 'Indian', 'Other painting', 'Reprints or printed']
 
 interface Props {
   user: AppUser
@@ -32,7 +32,7 @@ const STATUS_COLORS: Record<string, string> = {
 export default function SellerDashboardClient({ user, artworks, stats }: Props) {
   const router = useRouter()
   const [showUpload, setShowUpload] = useState(false)
-  const [form, setForm] = useState({ title: '', description: '', category: 'Abstract', image_url: '', seller_requested_price: '', quantity: '1', artwork_type: 'original' })
+  const [form, setForm] = useState({ title: '', description: '', category: 'Landscape', image_url: '', seller_requested_price: '', quantity: '1', artwork_type: 'original' })
   const [loading, setLoading] = useState(false)
   const [preview, setPreview] = useState('')
   const [chatArtwork, setChatArtwork] = useState<Artwork | null>(null)
@@ -75,7 +75,7 @@ export default function SellerDashboardClient({ user, artworks, stats }: Props) 
       if (!res.ok) throw new Error(data.error)
       toast.success('Artwork submitted for review!')
       setShowUpload(false)
-      setForm({ title: '', description: '', category: 'Abstract', image_url: '', seller_requested_price: '', quantity: '1', artwork_type: 'original' })
+      setForm({ title: '', description: '', category: 'Landscape', image_url: '', seller_requested_price: '', quantity: '1', artwork_type: 'original' })
       setPreview('')
       router.refresh()
     } catch (e: any) { toast.error(e.message) }
