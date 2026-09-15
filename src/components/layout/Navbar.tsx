@@ -23,6 +23,8 @@ const NAV_LINKS = [
   { label: 'Home', href: '/' },
   { label: 'Artworks', href: '/artworks' },
   { label: 'Reviews', href: '/reviews' },
+  // TODO (Post-Competition Cleanup): Remove this object when the competition is over
+  { label: 'Competition', href: '/competition' },
 ]
 
 export default function Navbar({ user, cartCount = 0 }: NavbarProps) {

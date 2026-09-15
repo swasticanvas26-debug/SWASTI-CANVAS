@@ -15,6 +15,7 @@ export default function AdminNewArtworkForm() {
     description: '',
     category: 'Landscape',
     image_url: '',
+    artist_name: '',
     seller_requested_price: '',
     listing_price: '',
     quantity: '1',
@@ -88,6 +89,11 @@ export default function AdminNewArtworkForm() {
           <div>
             <label className="block text-sm font-medium mb-1.5">Title</label>
             <input type="text" required value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} placeholder="Sunset Bloom" className="input-field" />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1.5">Artist Name (Optional)</label>
+            <input type="text" value={form.artist_name} onChange={e => setForm(f => ({ ...f, artist_name: e.target.value }))} placeholder="E.g. Leonardo da Vinci" className="input-field" />
           </div>
 
           <div>

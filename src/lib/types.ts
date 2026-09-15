@@ -30,6 +30,7 @@ export interface Artwork {
   quantity: number
   status: ArtworkStatus
   artwork_type?: ArtworkType
+  artist_name?: string
   created_at: string
   updated_at: string
   // joined

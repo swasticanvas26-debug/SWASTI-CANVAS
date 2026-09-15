@@ -74,7 +74,8 @@ export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname
 
   // Public routes
-  const publicRoutes = ['/', '/login', '/signup', '/artworks', '/faq', '/terms', '/privacy-policy', '/reviews', '/about']
+  // TODO (Post-Competition Cleanup): Remove '/competition' from this array when the competition is over
+  const publicRoutes = ['/', '/login', '/signup', '/artworks', '/faq', '/terms', '/privacy-policy', '/reviews', '/about', '/competition']
   const isPublic = publicRoutes.some(r => pathname === r || (r !== '/' && pathname.startsWith(`${r}/`)))
   const isApi = pathname.startsWith('/api/')
 

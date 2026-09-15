@@ -94,7 +94,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
             <h1 className="font-display font-bold text-3xl text-canvas-dark mb-1">{artwork.title}</h1>
             <div className="flex items-center gap-2 mb-4">
               <User2 className="w-4 h-4 text-canvas-muted" />
-              <span className="text-canvas-muted text-sm">{artwork.seller?.name ?? 'Swasti Canvas'}</span>
+              <span className="text-canvas-muted text-sm">{artwork.artist_name || artwork.seller?.name || 'Swasti Canvas'}</span>
             </div>
 
             {artwork.description && (

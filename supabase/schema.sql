@@ -52,6 +52,7 @@ CREATE TABLE IF NOT EXISTS artworks (
   listing_price           NUMERIC(12,2),
   quantity                INTEGER NOT NULL DEFAULT 1,
   status                  artwork_status NOT NULL DEFAULT 'pending_approval',
+  artist_name             TEXT,
   created_at              TIMESTAMPTZ DEFAULT NOW(),
   updated_at              TIMESTAMPTZ DEFAULT NOW()
 );

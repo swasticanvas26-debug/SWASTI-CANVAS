@@ -54,6 +54,8 @@ export default function AdminOverview(props: AdminOverviewProps) {
   const [processingOrderId, setProcessingOrderId] = useState<string | null>(null)
   const [editPriceModal, setEditPriceModal] = useState<{ artwork: Artwork } | null>(null)
   const [editPriceInput, setEditPriceInput] = useState('')
+  const [editDescInput, setEditDescInput] = useState('')
+  const [editArtistInput, setEditArtistInput] = useState('')
   const [editingPriceId, setEditingPriceId] = useState<string | null>(null)
 
   const handleOrderAction = async (orderId: string, action: 'confirm' | 'decline') => {
@@ -115,7 +117,7 @@ export default function AdminOverview(props: AdminOverviewProps) {
       const res = await fetch(`/api/artworks/${editPriceModal.artwork.id}/approve`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ listing_price: price }),
+        body: JSON.stringify({ listing_price: price, description: editDescInput, artist_name: editArtistInput }),
       })
       if (!res.ok) throw new Error((await res.json()).error)
       toast.success('Listing price updated!')
@@ -345,8 +347,8 @@ export default function AdminOverview(props: AdminOverviewProps) {
                           <button onClick={() => handleApprove(artwork)} className="btn-teal text-xs px-3 py-1.5 flex items-center gap-1">
                             <Check className="w-3.5 h-3.5" /> Approve
                           </button>
-                          <button onClick={() => handleApprove(artwork)} className="btn-outline text-xs px-3 py-1.5 flex items-center gap-1">
-                            <Edit2 className="w-3.5 h-3.5" /> Edit & Price
+                          <button onClick={() => { setEditPriceModal({ artwork }); setEditPriceInput(String(artwork.listing_price || artwork.seller_requested_price)); setEditDescInput(artwork.description || ''); setEditArtistInput(artwork.artist_name || '') }} className="btn-outline text-xs px-3 py-1.5 flex items-center gap-1">
+                            <Edit2 className="w-3.5 h-3.5" /> Edit Details
                           </button>
                           <button
                             onClick={() => handleReject(artwork.id)}
@@ -447,7 +449,7 @@ export default function AdminOverview(props: AdminOverviewProps) {
                       </td> */}
                       <td>
                         <div className="flex gap-2">
-                          <button onClick={() => { setEditPriceModal({ artwork }); setEditPriceInput(String(artwork.listing_price || '')) }} className="text-teal text-xs font-semibold hover:underline">Edit Price</button>
+                          <button onClick={() => { setEditPriceModal({ artwork }); setEditPriceInput(String(artwork.listing_price || '')); setEditDescInput(artwork.description || ''); setEditArtistInput(artwork.artist_name || '') }} className="text-teal text-xs font-semibold hover:underline">Edit Details</button>
                           <button onClick={() => handleRemoveListing(artwork.id)} className="text-red-500 text-xs font-semibold hover:underline">Remove</button>
                         </div>
                       </td>
@@ -473,7 +475,7 @@ export default function AdminOverview(props: AdminOverviewProps) {
                   </div>
                   <div className="flex gap-2 text-xs">
                     {/* <button onClick={() => { setOfferModal({ artwork }); setOfferDiscount(''); setOfferUntil('') }} className="text-teal font-semibold">[{artwork.offer ? 'Edit' : 'Add'} Offer]</button> */}
-                    <button onClick={() => { setEditPriceModal({ artwork }); setEditPriceInput(String(artwork.listing_price || '')) }} className="text-teal font-semibold">[Edit Price]</button>
+                    <button onClick={() => { setEditPriceModal({ artwork }); setEditPriceInput(String(artwork.listing_price || '')); setEditDescInput(artwork.description || ''); setEditArtistInput(artwork.artist_name || '') }} className="text-teal font-semibold">[Edit Details]</button>
                     <button onClick={() => handleRemoveListing(artwork.id)} className="text-red-500 font-semibold">[Remove]</button>
                   </div>
                 </div>
@@ -569,18 +571,40 @@ export default function AdminOverview(props: AdminOverviewProps) {
       {editPriceModal && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md animate-slide-up">
-            <h3 className="font-display font-bold text-lg mb-1">Edit Listing Price</h3>
-            <p className="text-canvas-muted text-sm mb-4">Update the public listing price for <strong>{editPriceModal.artwork.title}</strong>.</p>
-            <div className="mb-4">
-              <div className="relative">
-                <IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-canvas-muted" />
+            <h3 className="font-display font-bold text-lg mb-1">Edit Listing Details</h3>
+            <p className="text-canvas-muted text-sm mb-4">Update the details for <strong>{editPriceModal.artwork.title}</strong>.</p>
+            <div className="mb-4 space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-1.5">Listing Price</label>
+                <div className="relative">
+                  <IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-canvas-muted" />
+                  <input
+                    type="number"
+                    value={editPriceInput}
+                    onChange={e => setEditPriceInput(e.target.value)}
+                    className="input-field"
+                    style={{ paddingLeft: '2.25rem' }}
+                    placeholder="Set new listing price"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1.5">Artist Name (Optional)</label>
                 <input
-                  type="number"
-                  value={editPriceInput}
-                  onChange={e => setEditPriceInput(e.target.value)}
+                  type="text"
+                  value={editArtistInput}
+                  onChange={e => setEditArtistInput(e.target.value)}
                   className="input-field"
-                  style={{ paddingLeft: '2.25rem' }}
-                  placeholder="Set new listing price"
+                  placeholder="E.g. Leonardo da Vinci"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1.5">Description (Optional)</label>
+                <textarea
+                  value={editDescInput}
+                  onChange={e => setEditDescInput(e.target.value)}
+                  className="input-field resize-none h-24"
+                  placeholder="Update description..."
                 />
               </div>
             </div>

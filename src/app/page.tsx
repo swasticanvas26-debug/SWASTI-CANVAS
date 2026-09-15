@@ -55,8 +55,45 @@ export default async function HomePage() {
       <main className="pb-24 md:pb-0">
         <HomeHero artworks={artworks.slice(0, 3)} />
 
+        {/* 
+          TODO (Post-Competition Cleanup):
+          When the National Art Competition is over, you need to:
+          1. Remove this entire "Competition Banner" section.
+          2. Go to src/components/layout/Navbar.tsx and remove the 'Competition' link from NAV_LINKS.
+          3. Go to src/proxy.ts and remove '/competition' from publicRoutes.
+          4. Delete the src/app/competition/ folder, or update the page to say the competition has ended.
+        */}
+        {/* Competition Banner */}
+        <section className="max-w-7xl mx-auto px-3 sm:px-6 py-6 mt-4">
+          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-teal-900 to-teal-800 shadow-xl border border-teal-700/50">
+            <div className="absolute inset-0 bg-[url('/noise.png')] opacity-10 mix-blend-overlay"></div>
+            <div className="absolute top-0 right-0 w-64 h-64 bg-mustard/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-peach/20 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
+            
+            <div className="relative z-10 px-6 py-10 md:py-12 md:px-12 flex flex-col md:flex-row items-center justify-between gap-8">
+              <div className="text-center md:text-left">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-semibold text-white mb-4">
+                  <span className="w-2 h-2 rounded-full bg-mustard animate-pulse"></span>
+                  New Event
+                </div>
+                <h2 className="font-display font-bold text-3xl md:text-4xl text-white mb-2">
+                  National Art Competition (Dec 2026)
+                </h2>
+                <p className="text-teal-100 text-lg">
+                  Theme: Open Theme • Target: 7 to 16 years • <span className="font-semibold text-mustard">Exciting Cash Prizes!</span>
+                </p>
+              </div>
+              <div className="shrink-0">
+                <a href="/competition" className="btn-teal whitespace-nowrap px-8 py-4 text-lg shadow-lg hover:scale-105 transition-transform flex items-center justify-center gap-2">
+                  View Details & Participate
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Featured section — floating glass panel */}
-        <section className="max-w-7xl mx-auto px-3 sm:px-6 py-6 md:py-10">
+        <section className="max-w-7xl mx-auto px-3 sm:px-6 py-6 md:py-6">
           <div className="section-glass px-4 sm:px-6 py-6 md:py-8">
             <div className="flex items-center justify-between mb-6">
               <div>
