@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { CheckCircle2, Clock, XCircle } from 'lucide-react'
 import type { Order } from '@/lib/types'
+import SafeImage from '@/components/shared/SafeImage'
 
 interface AdminOrderHistoryProps {
   orders: Order[]
@@ -75,15 +76,7 @@ export default function AdminOrderHistory({ orders }: AdminOrderHistoryProps) {
                         }}
                         title="Click to view image"
                       >
-                        {order.artwork.image_url.includes('drive.google.com') ? (
-                          <img src={order.artwork.image_url.includes('/view') ? order.artwork.image_url.replace(/\/file\/d\/(.+?)\/view.*/, '/thumbnail?id=$1&sz=w200') : order.artwork.image_url} alt="Artwork" className="w-full h-full object-cover" />
-                        ) : order.artwork.image_url.includes('photos.app.goo.gl') || order.artwork.image_url.includes('photos.google.com') ? (
-                          <div className="w-full h-full flex flex-col items-center justify-center text-[10px] text-canvas-muted bg-gray-50">
-                            <span className="text-lg">📸</span>
-                          </div>
-                        ) : (
-                          <img src={order.artwork.image_url} alt="Artwork" className="w-full h-full object-cover" />
-                        )}
+                        <SafeImage src={order.artwork.image_url} alt="Artwork" fill className="object-cover" />
                       </div>
                     )}
                   </td>
@@ -156,13 +149,7 @@ export default function AdminOrderHistory({ orders }: AdminOrderHistoryProps) {
                         }
                       }}
                     >
-                      {order.artwork.image_url.includes('drive.google.com') ? (
-                        <img src={order.artwork.image_url.includes('/view') ? order.artwork.image_url.replace(/\/file\/d\/(.+?)\/view.*/, '/thumbnail?id=$1&sz=w200') : order.artwork.image_url} alt="Artwork" className="w-full h-full object-cover" />
-                      ) : order.artwork.image_url.includes('photos.app.goo.gl') || order.artwork.image_url.includes('photos.google.com') ? (
-                        <div className="w-full h-full flex flex-col items-center justify-center text-[10px] text-canvas-muted bg-gray-50"><span className="text-xl">📸</span></div>
-                      ) : (
-                        <img src={order.artwork.image_url} alt="Artwork" className="w-full h-full object-cover" />
-                      )}
+                      <SafeImage src={order.artwork.image_url} alt="Artwork" fill className="object-cover" />
                     </div>
                   )}
                   <div>

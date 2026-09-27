@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 import {
   ShoppingCart, Search, Menu, X, ChevronDown,
@@ -66,7 +67,7 @@ export default function Navbar({ user, cartCount = 0 }: NavbarProps) {
 
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 shrink-0">
-            <img src="/logo.jpg" alt="Logo" className="w-14 h-14 object-cover rounded-full shadow-teal" />
+            <Image src="/logo.jpg" alt="Logo" width={56} height={56} className="w-14 h-14 object-cover rounded-full shadow-teal" />
             <div className="flex flex-col justify-center">
               <div className="font-display font-bold text-teal text-lg tracking-tight leading-none">SWASTI</div>
               <div className="font-display font-bold text-teal-light text-[10px] tracking-widest leading-none">CANVAS</div>

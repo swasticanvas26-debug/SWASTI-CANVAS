@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
 import toast from 'react-hot-toast'
@@ -42,7 +43,7 @@ export default function ResetPasswordPage() {
       <div className="relative z-10 w-full max-w-md px-4">
         <div className="glass-card p-8 animate-slide-up">
           <div className="flex flex-col items-center mb-8">
-            <img src="/logo.jpg" alt="Logo" className="w-14 h-14 object-cover rounded-full shadow-teal mb-3" />
+            <Image src="/logo.jpg" alt="Logo" width={56} height={56} className="w-14 h-14 object-cover rounded-full shadow-teal mb-3" />
             <h1 className="font-display font-bold text-2xl text-teal">SWASTI CANVAS</h1>
           </div>
 

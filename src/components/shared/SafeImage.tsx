@@ -43,7 +43,6 @@ export default function SafeImage({ src, alt, fill, width, height, sizes, classN
       height={height}
       sizes={sizes}
       className={className}
-      unoptimized={isGoogleDrive}
       priority={priority}
     />
   )

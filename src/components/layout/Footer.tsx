@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { Mail, MapPin } from 'lucide-react'
 
 export default function Footer() {
@@ -14,7 +15,7 @@ export default function Footer() {
           {/* Brand Info */}
           <div className="md:col-span-1 space-y-4">
             <Link href="/" className="flex items-center gap-2 inline-flex">
-              <img src="/logo.jpg" alt="Logo" className="w-16 h-16 object-cover rounded-full shadow-teal" />
+              <Image src="/logo.jpg" alt="Logo" width={64} height={64} className="w-16 h-16 object-cover rounded-full shadow-teal" />
               <div className="flex flex-col justify-center">
                 <div className="font-display font-bold text-teal text-xl tracking-tight leading-none">SWASTI</div>
                 <div className="font-display font-bold text-teal-light text-[11px] tracking-widest leading-none mt-1">CANVAS</div>
