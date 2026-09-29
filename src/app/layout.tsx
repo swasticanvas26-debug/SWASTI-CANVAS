@@ -8,14 +8,14 @@ const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
   display: 'swap',
-  preload: false,
+  preload: true,
 })
 
 const outfit = Outfit({
   subsets: ['latin'],
   variable: '--font-outfit',
   display: 'swap',
-  preload: false,
+  preload: true,
 })
 
 export const metadata: Metadata = {
@@ -36,9 +36,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${inter.variable} ${outfit.variable}`} data-scroll-behavior="smooth">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-      </head>
+      <head />
       <body className="font-sans text-canvas-dark antialiased">
         <Toaster
           position="top-right"

@@ -11,9 +11,10 @@ interface SafeImageProps {
   sizes?: string
   className?: string
   priority?: boolean
+  fetchPriority?: 'high' | 'low' | 'auto'
 }
 
-export default function SafeImage({ src, alt, fill, width, height, sizes, className, priority }: SafeImageProps) {
+export default function SafeImage({ src, alt, fill, width, height, sizes, className, priority, fetchPriority }: SafeImageProps) {
   if (!src) return <div className={clsx("bg-gray-100 flex items-center justify-center text-canvas-muted", className)}><ImageIcon className="w-1/3 h-1/3 opacity-50" /></div>
 
   const isGooglePhotos = src.includes('photos.app.goo.gl') || src.includes('photos.google.com')
@@ -44,6 +45,7 @@ export default function SafeImage({ src, alt, fill, width, height, sizes, classN
       sizes={sizes}
       className={className}
       priority={priority}
+      fetchPriority={fetchPriority}
     />
   )
 }

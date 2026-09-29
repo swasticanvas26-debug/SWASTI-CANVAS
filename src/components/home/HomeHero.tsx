@@ -43,6 +43,7 @@ export default function HomeHero({ artworks }: HomeHeroProps) {
         fill
         className="object-cover"
         priority={true}
+        fetchPriority="high"
         sizes="100vw"
       />
       <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent" />

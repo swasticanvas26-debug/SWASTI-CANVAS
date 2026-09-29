@@ -1,0 +1,33 @@
+{
+  "schema_version": "1.0",
+  "name": "Swasti Canvas",
+  "description": "An Indian art marketplace to discover and purchase original artworks directly from talented artists across India.",
+  "url": "https://swasticanvas.com",
+  "contact": {
+    "email": "support@swasticanvas.com"
+  },
+  "capabilities": [
+    {
+      "type": "browse",
+      "name": "Browse Artworks",
+      "description": "Explore a curated collection of original paintings, abstracts, landscapes, and more.",
+      "url": "https://swasticanvas.com/artworks"
+    },
+    {
+      "type": "event",
+      "name": "National Art Competition",
+      "description": "Annual art competition for students aged 7 to 16 with exciting cash prizes.",
+      "url": "https://swasticanvas.com/competition"
+    }
+  ],
+  "categories": [
+    "Landscape",
+    "Abstract",
+    "Animal & Birds",
+    "Religious",
+    "Figurative",
+    "Indian",
+    "Other painting",
+    "Reprints or printed"
+  ]
+}

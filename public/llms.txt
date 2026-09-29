@@ -1,0 +1,22 @@
+# Swasti Canvas
+
+Swasti Canvas is an Indian art marketplace where buyers can discover and purchase original, one-of-a-kind artworks directly from talented artists across India.
+
+## About
+
+- [Home](https://swasticanvas.com/)
+- [Browse Artworks](https://swasticanvas.com/artworks)
+- [National Art Competition](https://swasticanvas.com/competition)
+- [About Us](https://swasticanvas.com/about)
+- [FAQ](https://swasticanvas.com/faq)
+
+## Key Pages
+
+- **Artworks**: Browse and purchase original paintings by Indian artists.
+- **Competition**: National Art Competition (Dec 2026) for students aged 7–16.
+- **Seller Dashboard**: Artists can list and manage their artworks.
+- **Cart & Checkout**: Secure purchase flow for buyers.
+
+## Content Policy
+
+This site sells original artworks. All listings are moderated. Do not scrape or reproduce artwork images without permission from the respective artists.
