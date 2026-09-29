@@ -1,21 +1,14 @@
-'use client'
-
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
 import SafeImage from '@/components/shared/SafeImage'
 import type { Artwork } from '@/lib/types'
 import Link from 'next/link'
+import HomeHeroClient from './HomeHeroClient'
 
 interface HomeHeroProps {
   artworks: Artwork[]
 }
 
 export default function HomeHero({ artworks }: HomeHeroProps) {
-  const [current, setCurrent] = useState(0)
-  const featured = artworks.length > 0 ? artworks : null
-
-  if (!featured || featured.length === 0) {
+  if (!artworks || artworks.length === 0) {
     return (
       <div className="relative h-64 md:h-80 bg-gradient-to-br from-teal-pale to-peach-pale flex items-center justify-center overflow-hidden">
         <div className="text-center">
@@ -29,14 +22,17 @@ export default function HomeHero({ artworks }: HomeHeroProps) {
     )
   }
 
-  const art = featured[current]
-  const discountedPrice = art.offer && new Date(art.offer.valid_until) > new Date()
-    ? (art.listing_price ?? 0) * (1 - art.offer.discount_percentage / 100)
-    : null
+  const art = artworks[0]
+  const discountedPrice =
+    art.offer && new Date(art.offer.valid_until) > new Date()
+      ? (art.listing_price ?? 0) * (1 - art.offer.discount_percentage / 100)
+      : null
 
   return (
     <div className="relative h-72 md:h-[400px] overflow-hidden mx-3 sm:mx-0 rounded-3xl sm:rounded-none shadow-[0_8px_40px_rgba(0,0,0,0.15)] sm:shadow-none mt-3 sm:mt-0">
-      {/* Background image */}
+
+      {/* ── First image: server-rendered so the browser discovers & fetches it
+           immediately from the raw HTML — no JS execution needed for LCP. ── */}
       <SafeImage
         src={art.image_url}
         alt={art.title}
@@ -48,7 +44,7 @@ export default function HomeHero({ artworks }: HomeHeroProps) {
       />
       <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent" />
 
-      {/* Content */}
+      {/* ── First slide content: also server-rendered, visible with zero JS ── */}
       <div className="relative z-10 h-full flex flex-col justify-end px-6 md:px-12 pb-8 md:pb-12">
         {art.offer && (
           <div className="offer-badge inline-flex mb-3 w-fit">
@@ -62,43 +58,26 @@ export default function HomeHero({ artworks }: HomeHeroProps) {
         <div className="flex items-center gap-4">
           {discountedPrice ? (
             <div className="flex items-center gap-2">
-              <span className="text-white/60 line-through text-sm">₹{(art.listing_price ?? 0).toLocaleString('en-IN')}</span>
-              <span className="text-white font-bold text-xl">₹{discountedPrice.toLocaleString('en-IN')}</span>
+              <span className="text-white/60 line-through text-sm">
+                ₹{(art.listing_price ?? 0).toLocaleString('en-IN')}
+              </span>
+              <span className="text-white font-bold text-xl">
+                ₹{discountedPrice.toLocaleString('en-IN')}
+              </span>
             </div>
           ) : (
-            <span className="text-white font-bold text-xl">₹{(art.listing_price ?? 0).toLocaleString('en-IN')}</span>
+            <span className="text-white font-bold text-xl">
+              ₹{(art.listing_price ?? 0).toLocaleString('en-IN')}
+            </span>
           )}
-          <Link href={`/artworks/${art.id}`} className="btn-teal text-sm">View Artwork</Link>
+          <Link href={`/artworks/${art.id}`} className="btn-teal text-sm">
+            View Artwork
+          </Link>
         </div>
       </div>
 
-      {/* Carousel controls */}
-      {featured.length > 1 && (
-        <>
-          <button
-            onClick={() => setCurrent((current - 1 + featured.length) % featured.length)}
-            className="absolute left-4 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/20 backdrop-blur rounded-full flex items-center justify-center text-white hover:bg-white/40 transition-colors"
-          >
-            <ChevronLeft className="w-5 h-5" />
-          </button>
-          <button
-            onClick={() => setCurrent((current + 1) % featured.length)}
-            className="absolute right-4 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/20 backdrop-blur rounded-full flex items-center justify-center text-white hover:bg-white/40 transition-colors"
-          >
-            <ChevronRight className="w-5 h-5" />
-          </button>
-          {/* Dots */}
-          <div className="absolute bottom-3 right-6 flex gap-1.5">
-            {featured.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrent(i)}
-                className={`w-2 h-2 rounded-full transition-all ${i === current ? 'bg-white w-5' : 'bg-white/40'}`}
-              />
-            ))}
-          </div>
-        </>
-      )}
+      {/* ── Client island: carousel controls + smooth slide transitions ── */}
+      <HomeHeroClient artworks={artworks} />
     </div>
   )
 }
