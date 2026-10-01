@@ -75,7 +75,7 @@ export async function proxy(request: NextRequest) {
 
   // Public routes
   // TODO (Post-Competition Cleanup): Remove '/competition' from this array when the competition is over
-  const publicRoutes = ['/', '/login', '/signup', '/artworks', '/faq', '/terms', '/privacy-policy', '/reviews', '/about', '/competition']
+  const publicRoutes = ['/', '/login', '/signup', '/artworks', '/faq', '/terms', '/privacy-policy', '/reviews', '/about', '/competition', '/sitemap.xml', '/robots.txt']
   const isPublic = publicRoutes.some(r => pathname === r || (r !== '/' && pathname.startsWith(`${r}/`)))
   const isApi = pathname.startsWith('/api/')
 
@@ -98,6 +98,17 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    /*
+     * Match all request paths EXCEPT:
+     * - _next/static (static files)
+     * - _next/image (image optimization)
+     * - favicon.ico
+     * - sitemap.xml (must be publicly accessible for SEO)
+     * - robots.txt (must be publicly accessible for SEO)
+     * - llms.txt
+     * - Static file extensions (images, fonts, etc.)
+     */
+    '/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|llms.txt|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|xml|txt)$).*)',
   ],
 }
+
