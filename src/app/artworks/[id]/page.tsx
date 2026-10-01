@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation'
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import SafeImage from '@/components/shared/SafeImage'
 import { ArrowLeft, Tag, ShoppingCart, User2 } from 'lucide-react'
@@ -10,8 +11,66 @@ import MobileBottomNav from '@/components/layout/MobileBottomNav'
 import AddToCartButton from '@/components/artwork/AddToCartButton'
 import ArtworkReviews from '@/components/artwork/ArtworkReviews'
 
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://swasticanvas.com'
+
 interface Props {
   params: Promise<{ id: string }>
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id } = await params
+  const supabase = await createSupabaseServiceClient()
+  const { data: artwork } = await supabase
+    .from('artworks')
+    .select('id, title, description, category, artist_name, image_url, listing_price, seller_requested_price, artwork_type, seller:users!artworks_seller_id_fkey(name)')
+    .eq('id', id)
+    .eq('status', 'listed')
+    .single()
+
+  if (!artwork) {
+    return { title: 'Artwork Not Found' }
+  }
+
+  const artistName = artwork.artist_name || (artwork.seller as any)?.name || 'Swasti Canvas'
+  const price = artwork.listing_price ?? artwork.seller_requested_price
+  const title = `${artwork.title} by ${artistName} – Buy ${artwork.category} Art Online`
+  const description = artwork.description
+    ? `${artwork.description.slice(0, 150)}… Buy this ${artwork.category?.toLowerCase()} painting by ${artistName} on Swasti Canvas. Starting at ₹${price?.toLocaleString('en-IN')}.`
+    : `Buy "${artwork.title}" – an original ${artwork.category?.toLowerCase()} painting by ${artistName}. Available on Swasti Canvas, India's premier art marketplace. Starting at ₹${price?.toLocaleString('en-IN')}.`
+
+  return {
+    title,
+    description,
+    keywords: [
+      `${artwork.title}`,
+      `${artwork.category} painting`,
+      `${artwork.category} art India`,
+      `${artistName} artwork`,
+      'buy original painting India',
+      'Indian art online',
+      'Swasti Canvas',
+    ],
+    alternates: {
+      canonical: `${BASE_URL}/artworks/${id}`,
+    },
+    openGraph: {
+      title,
+      description,
+      url: `${BASE_URL}/artworks/${id}`,
+      siteName: 'Swasti Canvas',
+      type: 'website',
+      locale: 'en_IN',
+      images: artwork.image_url
+        ? [{ url: artwork.image_url, alt: artwork.title }]
+        : [{ url: `${BASE_URL}/logo.jpg`, alt: 'Swasti Canvas' }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: artwork.image_url ? [artwork.image_url] : [`${BASE_URL}/logo.jpg`],
+    },
+  }
 }
 
 export default async function ArtworkDetailPage({ params }: Props) {
@@ -50,9 +109,66 @@ export default async function ArtworkDetailPage({ params }: Props) {
       })()
     : 0
 
+  // Product schema markup
+  const productSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: artwork.title,
+    description: artwork.description || `Original ${artwork.category} painting by ${artwork.artist_name || artwork.seller?.name || 'Swasti Canvas'}`,
+    image: artwork.image_url || `${BASE_URL}/logo.jpg`,
+    category: artwork.category,
+    brand: {
+      '@type': 'Brand',
+      name: artwork.artist_name || artwork.seller?.name || 'Swasti Canvas',
+    },
+    offers: {
+      '@type': 'Offer',
+      url: `${BASE_URL}/artworks/${artwork.id}`,
+      priceCurrency: 'INR',
+      price: discountedPrice ?? displayPrice,
+      priceValidUntil: offer ? offer.valid_until : new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split('T')[0],
+      availability: artwork.quantity > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+      seller: {
+        '@type': 'Organization',
+        name: 'Swasti Canvas',
+        url: BASE_URL,
+      },
+    },
+    ...(artwork.reviews && artwork.reviews.length > 0 ? {
+      aggregateRating: {
+        '@type': 'AggregateRating',
+        ratingValue: (
+          artwork.reviews.reduce((sum: number, r: any) => sum + (r.artwork_rating || 0), 0) /
+          artwork.reviews.filter((r: any) => r.artwork_rating).length
+        ).toFixed(1),
+        reviewCount: artwork.reviews.filter((r: any) => r.artwork_rating).length,
+        bestRating: 5,
+        worstRating: 1,
+      },
+    } : {}),
+  }
+
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: BASE_URL },
+      { '@type': 'ListItem', position: 2, name: 'Artworks', item: `${BASE_URL}/artworks` },
+      { '@type': 'ListItem', position: 3, name: artwork.title, item: `${BASE_URL}/artworks/${artwork.id}` },
+    ],
+  }
+
   return (
     <MainLayout>
       <Navbar user={user} cartCount={cartCount} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8 pb-24 md:pb-8">
         <Link href="/artworks" className="inline-flex items-center gap-1.5 text-sm text-canvas-muted hover:text-teal mb-6 transition-colors">
           <ArrowLeft className="w-4 h-4" /> Back to Gallery

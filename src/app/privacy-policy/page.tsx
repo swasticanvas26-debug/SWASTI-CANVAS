@@ -1,6 +1,16 @@
+import type { Metadata } from 'next'
 import MainLayout from '@/components/layout/MainLayout'
 import Navbar from '@/components/layout/Navbar'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
+
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://swasticanvas.com'
+
+export const metadata: Metadata = {
+  title: 'Privacy Policy | Swasti Canvas',
+  description: 'Read the Swasti Canvas Privacy Policy. Learn how we collect, use, and protect your personal data on India’s premier online art marketplace.',
+  alternates: { canonical: `${BASE_URL}/privacy-policy` },
+  robots: { index: true, follow: false },
+}
 
 export default async function PrivacyPolicyPage() {
   const supabase = await createSupabaseServerClient()

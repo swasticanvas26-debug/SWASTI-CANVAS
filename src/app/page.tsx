@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
 import { getAppUser } from '@/lib/auth'
 import MainLayout from '@/components/layout/MainLayout'
@@ -6,6 +7,45 @@ import MobileBottomNav from '@/components/layout/MobileBottomNav'
 import HomeHero from '@/components/home/HomeHero'
 import FeaturedGrid from '@/components/home/FeaturedGrid'
 import type { Artwork } from '@/lib/types'
+
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://swasticanvas.com'
+
+export const metadata: Metadata = {
+  title: 'Swasti Canvas – Buy Original Indian Art Online | Art for Everyone',
+  description:
+    'Swasti Canvas is India’s premier online art marketplace. Discover and buy original paintings – Landscape, Abstract, Religious, Figurative art and more. Support talented Indian artists directly. Art for Everyone.',
+  keywords: [
+    'buy original paintings online India',
+    'Indian art marketplace',
+    'original Indian art for sale',
+    'buy Indian paintings',
+    'landscape paintings India',
+    'abstract art India',
+    'religious paintings India',
+    'figurative art India',
+    'Swasti Canvas',
+    'art for everyone',
+    'online art gallery India',
+    'support Indian artists',
+    'art competition India 2026',
+  ],
+  alternates: { canonical: BASE_URL },
+  openGraph: {
+    title: 'Swasti Canvas – Buy Original Indian Art Online',
+    description: 'Discover and buy original paintings from talented Indian artists. Landscape, Abstract, Religious, Figurative art and more.',
+    url: BASE_URL,
+    siteName: 'Swasti Canvas',
+    type: 'website',
+    locale: 'en_IN',
+    images: [{ url: `${BASE_URL}/logo.jpg`, width: 1200, height: 630, alt: 'Swasti Canvas – Indian Art Marketplace' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Swasti Canvas – Buy Original Indian Art Online',
+    description: 'India’s premier online art marketplace. Buy original paintings, support talented artists.',
+    images: [`${BASE_URL}/logo.jpg`],
+  },
+}
 
 export const revalidate = 60
 

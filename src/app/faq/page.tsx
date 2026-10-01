@@ -1,6 +1,39 @@
+import type { Metadata } from 'next'
 import MainLayout from '@/components/layout/MainLayout'
 import Navbar from '@/components/layout/Navbar'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
+
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://swasticanvas.com'
+
+export const metadata: Metadata = {
+  title: 'Frequently Asked Questions (FAQ) – Buying & Selling Art | Swasti Canvas',
+  description:
+    'Find answers to all your questions about Swasti Canvas – how to buy original Indian paintings, how to sell artwork, shipping, returns, payments, and more.',
+  keywords: [
+    'Swasti Canvas FAQ',
+    'how to buy art online India',
+    'how to sell art online India',
+    'art marketplace questions',
+    'Indian painting shipping',
+    'buy original art FAQ',
+    'art platform India help',
+  ],
+  alternates: { canonical: `${BASE_URL}/faq` },
+  openGraph: {
+    title: 'FAQ – Swasti Canvas | Buying & Selling Indian Art',
+    description: 'Common questions about buying, selling and collecting art on Swasti Canvas.',
+    url: `${BASE_URL}/faq`,
+    siteName: 'Swasti Canvas',
+    type: 'website',
+    locale: 'en_IN',
+    images: [{ url: `${BASE_URL}/logo.jpg`, alt: 'Swasti Canvas FAQ' }],
+  },
+  twitter: {
+    card: 'summary',
+    title: 'FAQ – Swasti Canvas',
+    description: 'Answers to common questions about buying and selling art on Swasti Canvas.',
+  },
+}
 
 export default async function FAQPage() {
   const supabase = await createSupabaseServerClient()

@@ -1,6 +1,16 @@
+import type { Metadata } from 'next'
 import MainLayout from '@/components/layout/MainLayout'
 import Navbar from '@/components/layout/Navbar'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
+
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://swasticanvas.com'
+
+export const metadata: Metadata = {
+  title: 'Terms & Conditions | Swasti Canvas',
+  description: 'Read the Terms and Conditions for using Swasti Canvas – India’s online art marketplace. Understand your rights and responsibilities as a buyer or seller.',
+  alternates: { canonical: `${BASE_URL}/terms` },
+  robots: { index: true, follow: false },
+}
 
 export default async function TermsPage() {
   const supabase = await createSupabaseServerClient()

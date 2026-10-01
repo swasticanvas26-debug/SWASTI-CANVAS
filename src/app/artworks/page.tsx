@@ -1,4 +1,5 @@
 import { Suspense } from 'react'
+import type { Metadata } from 'next'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
 import { getAppUser } from '@/lib/auth'
 import MainLayout from '@/components/layout/MainLayout'
@@ -7,10 +8,64 @@ import MobileBottomNav from '@/components/layout/MobileBottomNav'
 import FeaturedGrid from '@/components/home/FeaturedGrid'
 import type { Artwork } from '@/lib/types'
 
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://swasticanvas.com'
+
 interface SearchParams {
   search?: string
   category?: string
   page?: string
+}
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>
+}): Promise<Metadata> {
+  const params = await searchParams
+  const category = params.category
+  const search = params.search
+
+  let title: string
+  let description: string
+  let canonical: string
+
+  if (search) {
+    title = `Search: "${search}" – Indian Artworks | Swasti Canvas`
+    description = `Browse original Indian artworks matching "${search}". Buy paintings and support talented artists on Swasti Canvas.`
+    canonical = `${BASE_URL}/artworks?search=${encodeURIComponent(search)}`
+  } else if (category) {
+    title = `Buy ${category} Paintings Online India – Original Art | Swasti Canvas`
+    description = `Explore a curated collection of original ${category.toLowerCase()} paintings by talented Indian artists. Buy authentic artworks at Swasti Canvas – India's premier art marketplace.`
+    canonical = `${BASE_URL}/artworks?category=${encodeURIComponent(category)}`
+  } else {
+    title = 'Buy Original Indian Paintings Online – Art Gallery | Swasti Canvas'
+    description = 'Browse and buy original Indian paintings – Landscape, Abstract, Religious, Figurative, Animal & Birds and more. Support talented artists directly. Free shipping available.'
+    canonical = `${BASE_URL}/artworks`
+  }
+
+  return {
+    title,
+    description,
+    keywords: category
+      ? [`${category} painting India`, `buy ${category} art online`, `${category} artwork`, 'Indian paintings', 'Swasti Canvas', 'original art']
+      : ['buy Indian paintings online', 'original paintings India', 'art gallery online India', 'Indian artwork', 'Swasti Canvas', 'Indian artists'],
+    alternates: { canonical },
+    openGraph: {
+      title,
+      description,
+      url: canonical,
+      siteName: 'Swasti Canvas',
+      type: 'website',
+      locale: 'en_IN',
+      images: [{ url: `${BASE_URL}/logo.jpg`, alt: 'Swasti Canvas – Indian Art Marketplace' }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [`${BASE_URL}/logo.jpg`],
+    },
+  }
 }
 
 async function getArtworks(params: SearchParams): Promise<Artwork[]> {

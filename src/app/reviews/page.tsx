@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { createSupabaseServiceClient } from '@/lib/supabase/server'
 import { getAppUser } from '@/lib/auth'
@@ -6,6 +7,31 @@ import Navbar from '@/components/layout/Navbar'
 import MobileBottomNav from '@/components/layout/MobileBottomNav'
 import SafeImage from '@/components/shared/SafeImage'
 import { MessageSquare, ArrowRight } from 'lucide-react'
+
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://swasticanvas.com'
+
+export const metadata: Metadata = {
+  title: 'Customer Reviews & Testimonials | Swasti Canvas',
+  description:
+    'Read genuine reviews from buyers and collectors on Swasti Canvas. See what art lovers across India say about buying original Indian paintings from our platform.',
+  keywords: [
+    'Swasti Canvas reviews',
+    'Indian art marketplace reviews',
+    'buy art online India reviews',
+    'original painting buyer testimonials',
+    'Swasti Canvas feedback',
+  ],
+  alternates: { canonical: `${BASE_URL}/reviews` },
+  openGraph: {
+    title: 'Customer Reviews – Swasti Canvas',
+    description: 'Genuine reviews from art buyers and collectors on Swasti Canvas – India’s premier art marketplace.',
+    url: `${BASE_URL}/reviews`,
+    siteName: 'Swasti Canvas',
+    type: 'website',
+    locale: 'en_IN',
+    images: [{ url: `${BASE_URL}/logo.jpg`, alt: 'Swasti Canvas Reviews' }],
+  },
+}
 
 export const dynamic = 'force-dynamic'
 

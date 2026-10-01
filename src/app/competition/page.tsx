@@ -1,9 +1,43 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Calendar, Trophy, Image as ImageIcon, CheckCircle2, ChevronRight, Mail, Info, FileText } from 'lucide-react'
 import MainLayout from '@/components/layout/MainLayout'
 import Navbar from '@/components/layout/Navbar'
 import MobileBottomNav from '@/components/layout/MobileBottomNav'
 import { getAppUser } from '@/lib/auth'
+
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://swasticanvas.com'
+
+export const metadata: Metadata = {
+  title: 'National Art Competition Dec 2026 – Kids & Teens 7-16 Years | Swasti Canvas',
+  description:
+    'Swasti Canvas presents the National Art Competition (December 2026) for children and teenagers aged 7-16 years. Open theme. Cash prizes. Register now and showcase your creativity!',
+  keywords: [
+    'national art competition India 2026',
+    'art competition for kids India',
+    'children art competition India',
+    'online art competition India',
+    'Swasti Canvas competition',
+    'art competition cash prize India',
+    'art contest 7 to 16 years',
+  ],
+  alternates: { canonical: `${BASE_URL}/competition` },
+  openGraph: {
+    title: 'National Art Competition Dec 2026 – Swasti Canvas',
+    description: 'Art competition for children aged 7-16 years. Open theme. Cash prizes. Organised by Swasti Canvas.',
+    url: `${BASE_URL}/competition`,
+    siteName: 'Swasti Canvas',
+    type: 'website',
+    locale: 'en_IN',
+    images: [{ url: `${BASE_URL}/logo.jpg`, alt: 'Swasti Canvas National Art Competition' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'National Art Competition Dec 2026 – Swasti Canvas',
+    description: 'Kids art competition with cash prizes. Register now!',
+    images: [`${BASE_URL}/logo.jpg`],
+  },
+}
 
 export default async function CompetitionPage() {
   const user = await getAppUser()

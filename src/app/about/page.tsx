@@ -1,7 +1,42 @@
+import type { Metadata } from 'next'
 import MainLayout from '@/components/layout/MainLayout'
 import Navbar from '@/components/layout/Navbar'
 import MobileBottomNav from '@/components/layout/MobileBottomNav'
 import { getAppUser } from '@/lib/auth'
+
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://swasticanvas.com'
+
+export const metadata: Metadata = {
+  title: 'About Us – Our Story & Mission | Swasti Canvas',
+  description:
+    'Learn about Swasti Canvas – India’s vibrant online art marketplace based in Haryana. We celebrate and promote Indian art, connecting emerging and established artists with art lovers and collectors across India and beyond.',
+  keywords: [
+    'about Swasti Canvas',
+    'Indian art platform',
+    'art marketplace India',
+    'Haryana art gallery',
+    'buy Indian art online',
+    'Indian artists platform',
+    'art for everyone',
+  ],
+  alternates: { canonical: `${BASE_URL}/about` },
+  openGraph: {
+    title: 'About Swasti Canvas – Art for Everyone',
+    description:
+      'Swasti Canvas is a vibrant art platform based in Haryana, dedicated to celebrating and making Indian art accessible to all.',
+    url: `${BASE_URL}/about`,
+    siteName: 'Swasti Canvas',
+    type: 'website',
+    locale: 'en_IN',
+    images: [{ url: `${BASE_URL}/logo.jpg`, alt: 'Swasti Canvas – Indian Art Marketplace' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'About Swasti Canvas – Art for Everyone',
+    description: 'India’s vibrant art platform connecting artists and art lovers.',
+    images: [`${BASE_URL}/logo.jpg`],
+  },
+}
 
 export const dynamic = 'force-dynamic'
 
